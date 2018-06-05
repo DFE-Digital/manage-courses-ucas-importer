@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Microsoft.Extensions.CommandLineUtils;
+using NPOI.HSSF.UserModel;
 
 namespace UcasCourseImporter
 {
@@ -19,6 +20,12 @@ namespace UcasCourseImporter
             foreach (var file in folder.GetFiles("*.xls"))
             {
                 Console.WriteLine(" - " + file.FullName);
+                using (var stream = new FileStream(file.FullName, FileMode.Open))
+                {
+                    var wb = new HSSFWorkbook(stream);
+                    var sheet = wb.GetSheetAt(0);
+                    Console.WriteLine(" -- " + sheet.SheetName);
+                }
             }
         }
     }
