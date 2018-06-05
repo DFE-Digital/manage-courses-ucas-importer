@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Microsoft.Extensions.CommandLineUtils;
 using NPOI.HSSF.UserModel;
 
@@ -26,10 +27,8 @@ namespace UcasCourseImporter
                     var sheet = wb.GetSheetAt(0);
                     Console.WriteLine(" -- " + sheet.SheetName);
                     var header = sheet.GetRow(0);
-                    foreach (var headerCell in header.Cells)
-                    {
-                        Console.WriteLine(" --- " + headerCell.StringCellValue);
-                    }
+                    Console.WriteLine(" --- Cols: "
+                          + string.Join(", ", header.Cells.Select(c => c.StringCellValue)));
                 }
             }
         }
