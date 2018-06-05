@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "UcasCourseImporter": {
+      "commandName": "Project",
+      "commandLineArgs": "--folder \"C:\\Users\\tim\\Documents\\NetupdateExtract_04062018_1000\""
+    }
+  }
+}
