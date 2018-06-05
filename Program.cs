@@ -25,6 +25,11 @@ namespace UcasCourseImporter
                     var wb = new HSSFWorkbook(stream);
                     var sheet = wb.GetSheetAt(0);
                     Console.WriteLine(" -- " + sheet.SheetName);
+                    var header = sheet.GetRow(0);
+                    foreach (var headerCell in header.Cells)
+                    {
+                        Console.WriteLine(" --- " + headerCell.StringCellValue);
+                    }
                 }
             }
         }
