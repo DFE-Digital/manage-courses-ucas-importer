@@ -18,6 +18,7 @@ namespace UcasCourseImporter
             Console.WriteLine(folderOption.Value());
 
             var folder = new DirectoryInfo(folderOption.Value());
+            int totalrowcount = 0;
             foreach (var file in folder.GetFiles("*.xls"))
             {
                 Console.WriteLine(" - " + file.FullName);
@@ -29,8 +30,18 @@ namespace UcasCourseImporter
                     var header = sheet.GetRow(0);
                     Console.WriteLine(" --- Cols: "
                           + string.Join(", ", header.Cells.Select(c => c.StringCellValue)));
+                    int rowcount = 0;
+                    foreach (var row in sheet)
+                    {
+                        rowcount++;
+                    }
+
+                    Console.WriteLine(" --- rowcount: " + rowcount);
+                    Console.WriteLine();
+                    totalrowcount += rowcount;
                 }
             }
+            Console.WriteLine("total rowcount: " + totalrowcount);
         }
     }
 }
