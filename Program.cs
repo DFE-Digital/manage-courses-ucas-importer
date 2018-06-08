@@ -17,28 +17,49 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             app.HelpOption("-?|-h|--help");
             app.Execute(args);
 
-            ReadFiles(folderOption.Value());
-            HitApi();
+            var courses = ReadCourses(folderOption.Value());
+            SendToManageCoursesApi(courses);
         }
 
-        private static void HitApi()
+        private static void SendToManageCoursesApi(List<Course> courses)
         {
             Console.WriteLine("Posting to api...");
             var client = new ManageCoursesApiClient();
-            var payload = new Payload
-            {
-                Courses = new ObservableCollection<Course>
-                {
-                    new Course
-                    {
-                        Title = "Defence Against The Dark Arts",
-                        CourseCode = "HP1",
-                        NctlId = "123",
-                    }
-                }
-            };
+            var payload = new Payload { Courses = new ObservableCollection<Course>(courses) };
             client.ImportAsync(payload).Wait();
             Console.WriteLine("Done.");
+        }
+
+        private static List<Course> ReadCourses(string folder)
+        {
+            Console.Write("Reading course xls file from: ");
+            Console.WriteLine(folder);
+            var courses = new List<Course>();
+            var file = new FileInfo(Path.Combine(folder, "GTTR_CRSE.xls"));
+            using (var stream = new FileStream(file.FullName, FileMode.Open))
+            {
+                var wb = new HSSFWorkbook(stream);
+                var sheet = wb.GetSheetAt(0);
+                var header = sheet.GetRow(0);
+                var columnMap = header.Cells.ToDictionary(c => c.StringCellValue, c => c.ColumnIndex);
+                for (int rowIndex = 0; rowIndex <= sheet.LastRowNum; rowIndex++)
+                {
+                    if (sheet.GetRow(rowIndex) == null)
+                    {
+                        continue;
+                    }
+
+                    var row = sheet.GetRow(rowIndex);
+                    courses.Add(new Course
+                    {
+                        Title = row.GetCell(columnMap["CRSE_TITLE"]).StringCellValue,
+                        CourseCode = row.GetCell(columnMap["CRSE_CODE"]).StringCellValue,
+                        NctlId = "todo",
+                    });
+                }
+            }
+            Console.Out.WriteLine(courses.Count + " courses loaded from xls");
+            return courses;
         }
 
         private static void ReadFiles(string folder)
