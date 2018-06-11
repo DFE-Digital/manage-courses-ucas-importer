@@ -52,9 +52,9 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
                     var row = sheet.GetRow(rowIndex);
                     courses.Add(new Course
                     {
+                        UcasInstitutionCode = row.GetCell(columnMap["INST_CODE"]).StringCellValue,
+                        UcasCourseCode = row.GetCell(columnMap["CRSE_CODE"]).StringCellValue,
                         Title = row.GetCell(columnMap["CRSE_TITLE"]).StringCellValue,
-                        CourseCode = row.GetCell(columnMap["CRSE_CODE"]).StringCellValue,
-                        NctlId = "todo",
                     });
                 }
             }
