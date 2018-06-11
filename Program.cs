@@ -61,36 +61,5 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             Console.Out.WriteLine(courses.Count + " courses loaded from xls");
             return courses;
         }
-
-        private static void ReadFiles(string folder)
-        {
-            Console.Write("Reading xls files from: ");
-            Console.WriteLine(folder);
-            int totalrowcount = 0;
-            foreach (var file in new DirectoryInfo(folder).GetFiles("*.xls"))
-            {
-                Console.WriteLine(" - " + file.FullName);
-                using (var stream = new FileStream(file.FullName, FileMode.Open))
-                {
-                    var wb = new HSSFWorkbook(stream);
-                    var sheet = wb.GetSheetAt(0);
-                    Console.WriteLine(" -- " + sheet.SheetName);
-                    var header = sheet.GetRow(0);
-                    Console.WriteLine(" --- Cols: "
-                                      + string.Join(", ", header.Cells.Select(c => c.StringCellValue)));
-                    int rowcount = 0;
-                    foreach (var row in sheet)
-                    {
-                        rowcount++;
-                    }
-
-                    Console.WriteLine(" --- rowcount: " + rowcount);
-                    Console.WriteLine();
-                    totalrowcount += rowcount;
-                }
-            }
-
-            Console.WriteLine("total rowcount: " + totalrowcount);
-        }
     }
 }
