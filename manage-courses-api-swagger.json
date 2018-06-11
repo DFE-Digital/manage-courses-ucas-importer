@@ -76,13 +76,13 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "courseCode": {
+        "ucasInstitutionCode": {
+          "type": "string"
+        },
+        "ucasCourseCode": {
           "type": "string"
         },
         "title": {
-          "type": "string"
-        },
-        "nctlId": {
           "type": "string"
         }
       }
