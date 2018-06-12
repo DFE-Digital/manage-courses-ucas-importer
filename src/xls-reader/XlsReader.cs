@@ -20,15 +20,16 @@ namespace GovUk.Education.ManageCourses.Xls
                 var wb = new HSSFWorkbook(stream);
                 var sheet = wb.GetSheetAt(0);
                 var header = sheet.GetRow(0);
+                
                 var columnMap = header.Cells.ToDictionary(c => c.StringCellValue, c => c.ColumnIndex);
-                for (int rowIndex = 0; rowIndex <= sheet.LastRowNum; rowIndex++)
+                for (int dataRowIndex = 1; dataRowIndex <= sheet.LastRowNum; dataRowIndex++)
                 {
-                    if (sheet.GetRow(rowIndex) == null)
+                    if (sheet.GetRow(dataRowIndex) == null)
                     {
                         continue;
                     }
 
-                    var row = sheet.GetRow(rowIndex);
+                    var row = sheet.GetRow(dataRowIndex);
                     courses.Add(new Course
                     {
                         UcasInstitutionCode = row.GetCell(columnMap["INST_CODE"]).StringCellValue,
