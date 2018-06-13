@@ -1,4 +1,5 @@
-﻿using GovUk.Education.ManageCourses.ApiClient;
+﻿using System.Collections.ObjectModel;
+using GovUk.Education.ManageCourses.ApiClient;
 using GovUk.Education.ManageCourses.Xls;
 using Microsoft.Extensions.CommandLineUtils;
 
@@ -14,7 +15,22 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             app.Execute(args);
 
             var courses = new XlsReader().ReadCourses(folderOption.Value());
-            new ManageApi().SendToManageCoursesApi(courses);
+            var institutions = new XlsReader().ReadInstitutions(folderOption.Value());
+            var subjects = new XlsReader().ReadSubjects(folderOption.Value());
+            var campuses = new XlsReader().ReadCampuses(folderOption.Value());
+            var courseNotes = new XlsReader().ReadCourseNotes(folderOption.Value());
+            var noteTexts = new XlsReader().ReadNoteText(folderOption.Value());
+
+            var payload = new Payload
+            {
+                Courses = new ObservableCollection<UcasCourse>(courses),
+                Institutions = new ObservableCollection<UcasInstitution>(institutions),
+                Subjects = new ObservableCollection<UcasSubject>(subjects),
+                Campuses = new ObservableCollection<UcasCampus>(campuses),
+                CourseNotes = new ObservableCollection<UcasCourseNote>(courseNotes),
+                NoteTexts = new ObservableCollection<UcasNoteText>(noteTexts)
+            };
+            new ManageApi().SendToManageCoursesApi(payload);
         }
    }
 }

@@ -6,11 +6,10 @@ namespace GovUk.Education.ManageCourses.ApiClient
 {
     public class ManageApi
     {
-        public void SendToManageCoursesApi(List<Course> courses)
+        public void SendToManageCoursesApi(Payload payload)
         {
             Console.WriteLine("Posting to api...");
-            var client = new ManageCoursesApiClient();
-            var payload = new Payload { Courses = new ObservableCollection<Course>(courses) };
+            var client = new ManageCoursesApiClient();            
             client.ImportAsync(payload).Wait();
             Console.WriteLine("Done.");
         }
