@@ -29,7 +29,10 @@
             "x-nullable": true,
             "description": "The exported data",
             "schema": {
-              "type": "file"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Course"
+              }
             }
           }
         }
@@ -60,6 +63,28 @@
     }
   },
   "definitions": {
+    "Course": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "title": {
+          "type": "string"
+        },
+        "ucasCode": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
     "Payload": {
       "type": "object",
       "additionalProperties": false,
@@ -69,21 +94,6 @@
           "items": {
             "$ref": "#/definitions/Course"
           }
-        }
-      }
-    },
-    "Course": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "ucasInstitutionCode": {
-          "type": "string"
-        },
-        "ucasCourseCode": {
-          "type": "string"
-        },
-        "title": {
-          "type": "string"
         }
       }
     }

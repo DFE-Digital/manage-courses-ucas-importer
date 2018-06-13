@@ -32,9 +32,19 @@ namespace GovUk.Education.ManageCourses.Xls
                     var row = sheet.GetRow(dataRowIndex);
                     courses.Add(new Course
                     {
-                        UcasInstitutionCode = row.GetCell(columnMap["INST_CODE"]).StringCellValue,
-                        UcasCourseCode = row.GetCell(columnMap["CRSE_CODE"]).StringCellValue,
+                        //UcasInstitutionCode = row.GetCell(columnMap["INST_CODE"]).StringCellValue,
+                        UcasCode = row.GetCell(columnMap["CRSE_CODE"]).StringCellValue,
                         Title = row.GetCell(columnMap["CRSE_TITLE"]).StringCellValue,
+                        //build type field so as to contain all required fields                        
+                        Type = row.GetCell(columnMap["INST_CODE"]).StringCellValue + "," +
+                               row.GetCell(columnMap["STUDYMODE"]).StringCellValue + "," +
+                               row.GetCell(columnMap["AGE"]).StringCellValue + "," +
+                               row.GetCell(columnMap["PROFPOST_FLAG"]).StringCellValue + "," +
+                               row.GetCell(columnMap["COPY_FORM_REQD"]).StringCellValue + "," +
+                               row.GetCell(columnMap["PROGRAM_TYPE"]).StringCellValue + "," +
+                               row.GetCell(columnMap["HAS_BEEN_PUBLISHED"]).StringCellValue + "," +
+                               row.GetCell(columnMap["ACCREDITING_PROVIDER"]).StringCellValue + "," +
+                               row.GetCell(columnMap["CRSE_OPEN_DATE"]).StringCellValue
                     });
                 }
             }
