@@ -107,6 +107,12 @@
             "$ref": "#/definitions/UcasSubject"
           }
         },
+        "courseSubjects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UcasCourseSubject"
+          }
+        },
         "campuses": {
           "type": "array",
           "items": {
@@ -220,6 +226,28 @@
       }
     },
     "UcasSubject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "subjectCode": {
+          "type": "string"
+        },
+        "subjectDescription": {
+          "type": "string"
+        },
+        "titleMatch": {
+          "type": "string"
+        }
+      }
+    },
+    "UcasCourseSubject": {
       "type": "object",
       "additionalProperties": false,
       "required": [

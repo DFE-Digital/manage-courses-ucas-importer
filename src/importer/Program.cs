@@ -16,6 +16,7 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
 
             var courses = new XlsReader().ReadCourses(folderOption.Value());
             var institutions = new XlsReader().ReadInstitutions(folderOption.Value());
+            var courseSubjects = new XlsReader().ReadCourseSubjects(folderOption.Value());
             var subjects = new XlsReader().ReadSubjects(folderOption.Value());
             var campuses = new XlsReader().ReadCampuses(folderOption.Value());
             var courseNotes = new XlsReader().ReadCourseNotes(folderOption.Value());
@@ -25,6 +26,7 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             {
                 Courses = new ObservableCollection<UcasCourse>(courses),
                 Institutions = new ObservableCollection<UcasInstitution>(institutions),
+                CourseSubjects = new ObservableCollection<UcasCourseSubject>(courseSubjects),
                 Subjects = new ObservableCollection<UcasSubject>(subjects),
                 Campuses = new ObservableCollection<UcasCampus>(campuses),
                 CourseNotes = new ObservableCollection<UcasCourseNote>(courseNotes),

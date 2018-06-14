@@ -91,9 +91,42 @@ namespace GovUk.Education.ManageCourses.Xls
             Console.Out.WriteLine(institutions.Count + " intitutions loaded from xls");
             return institutions;
         }
-        public List<UcasSubject> ReadSubjects(string folder)
+        public List<UcasCourseSubject> ReadCourseSubjects(string folder)
         {
             var file = new FileInfo(Path.Combine(folder, "GTTR_CRSE_SUBJECT.xls"));
+            Console.WriteLine("Reading course subject xls file from: " + file.FullName);
+
+            var courseSubjects = new List<UcasCourseSubject>();
+            using (var stream = new FileStream(file.FullName, FileMode.Open))
+            {
+                var wb = new HSSFWorkbook(stream);
+                var sheet = wb.GetSheetAt(0);
+                var header = sheet.GetRow(0);
+
+                var columnMap = header.Cells.ToDictionary(c => c.StringCellValue, c => c.ColumnIndex);
+                for (int dataRowIndex = 1; dataRowIndex <= sheet.LastRowNum; dataRowIndex++)
+                {
+                    if (sheet.GetRow(dataRowIndex) == null)
+                    {
+                        continue;
+                    }
+
+                    var row = sheet.GetRow(dataRowIndex);
+                    courseSubjects.Add(new UcasCourseSubject
+                    {
+                        InstCode = row.GetCell(columnMap["INST_CODE"]).StringCellValue,
+                        CourseCode = row.GetCell(columnMap["CRSE_CODE"]).StringCellValue,
+                        SubjectCode = row.GetCell(columnMap["SUBJECT_CODE"]).StringCellValue,
+                    }
+                    );
+                }
+            }
+            Console.Out.WriteLine(courseSubjects.Count + " course subjects loaded from xls");
+            return courseSubjects;
+        }
+        public List<UcasSubject> ReadSubjects(string folder)
+        {
+            var file = new FileInfo(Path.Combine(folder, "GTTR_SUBJECT.xls"));
             Console.WriteLine("Reading subject xls file from: " + file.FullName);
 
             var subjects = new List<UcasSubject>();
@@ -113,10 +146,10 @@ namespace GovUk.Education.ManageCourses.Xls
 
                     var row = sheet.GetRow(dataRowIndex);
                     subjects.Add(new UcasSubject
-                    {
-                        InstCode = row.GetCell(columnMap["INST_CODE"]).StringCellValue,
-                        CourseCode = row.GetCell(columnMap["CRSE_CODE"]).StringCellValue,
-                        SubjectCode = row.GetCell(columnMap["SUBJECT_CODE"]).StringCellValue,
+                        {
+                            SubjectCode = row.GetCell(columnMap["SUBJECT_CODE"]).StringCellValue,
+                            SubjectDescription = row.GetCell(columnMap["SUBJECT_DESCRIPTION"]).StringCellValue,
+                            TitleMatch = row.GetCell(columnMap["TITLE_MATCH"]).StringCellValue,                            
                     }
                     );
                 }
