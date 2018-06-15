@@ -144,34 +144,34 @@
           "type": "integer",
           "format": "int32"
         },
-        "title": {
-          "type": "string"
-        },
-        "courseCode": {
-          "type": "string"
-        },
         "instCode": {
           "type": "string"
         },
-        "studyMode": {
+        "crseCode": {
           "type": "string"
         },
-        "ageGroup": {
+        "crseTitle": {
+          "type": "string"
+        },
+        "studymode": {
+          "type": "string"
+        },
+        "age": {
           "type": "string"
         },
         "campusCode": {
           "type": "string"
         },
-        "profPostFlag": {
+        "profpostFlag": {
           "type": "string"
         },
         "programType": {
           "type": "string"
         },
-        "acreditedProvider": {
+        "accreditingProvider": {
           "type": "string"
         },
-        "openDate": {
+        "crseOpenDate": {
           "type": "string"
         }
       }
@@ -190,25 +190,31 @@
         "instCode": {
           "type": "string"
         },
-        "fullName": {
+        "instName": {
+          "type": "string"
+        },
+        "instBig": {
+          "type": "string"
+        },
+        "instFull": {
           "type": "string"
         },
         "instType": {
           "type": "string"
         },
-        "address1": {
+        "addr1": {
           "type": "string"
         },
-        "address2": {
+        "addr2": {
           "type": "string"
         },
-        "address3": {
+        "addr3": {
           "type": "string"
         },
-        "address4": {
+        "addr4": {
           "type": "string"
         },
-        "postCode": {
+        "postcode": {
           "type": "string"
         },
         "contactName": {
@@ -217,10 +223,16 @@
         "url": {
           "type": "string"
         },
+        "yearCode": {
+          "type": "string"
+        },
         "scitt": {
           "type": "string"
         },
-        "acreditedProvider": {
+        "accreditingProvider": {
+          "type": "string"
+        },
+        "schemeMember": {
           "type": "string"
         }
       }
@@ -261,10 +273,13 @@
         "instCode": {
           "type": "string"
         },
-        "courseCode": {
+        "crseCode": {
           "type": "string"
         },
         "subjectCode": {
+          "type": "string"
+        },
+        "yearCode": {
           "type": "string"
         }
       }
@@ -289,22 +304,25 @@
         "campusName": {
           "type": "string"
         },
-        "address1": {
+        "addr1": {
           "type": "string"
         },
-        "address2": {
+        "addr2": {
           "type": "string"
         },
-        "address3": {
+        "addr3": {
           "type": "string"
         },
-        "address4": {
+        "addr4": {
           "type": "string"
         },
-        "postCode": {
+        "postcode": {
           "type": "string"
         },
         "telNo": {
+          "type": "string"
+        },
+        "email": {
           "type": "string"
         },
         "regionCode": {
@@ -326,13 +344,16 @@
         "instCode": {
           "type": "string"
         },
-        "courseCode": {
+        "crseCode": {
           "type": "string"
         },
         "noteNo": {
           "type": "string"
         },
         "noteType": {
+          "type": "string"
+        },
+        "yearCode": {
           "type": "string"
         }
       }
@@ -358,6 +379,9 @@
           "type": "string"
         },
         "lineText": {
+          "type": "string"
+        },
+        "yearCode": {
           "type": "string"
         }
       }

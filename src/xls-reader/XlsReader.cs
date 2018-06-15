@@ -32,16 +32,16 @@ namespace GovUk.Education.ManageCourses.Xls
                     var row = sheet.GetRow(dataRowIndex);
                     courses.Add(new UcasCourse
                         {
-                            Title = row.GetCell(columnMap["CRSE_TITLE"]).StringCellValue,
-                            CourseCode = row.GetCell(columnMap["CRSE_CODE"]).StringCellValue,
                             InstCode = row.GetCell(columnMap["INST_CODE"]).StringCellValue,
-                            StudyMode = row.GetCell(columnMap["STUDYMODE"]).StringCellValue,
-                            AgeGroup = row.GetCell(columnMap["AGE"]).StringCellValue,
+                            CrseCode = row.GetCell(columnMap["CRSE_CODE"]).StringCellValue,
+                            CrseTitle = row.GetCell(columnMap["CRSE_TITLE"]).StringCellValue,                                                        
+                            Studymode = row.GetCell(columnMap["STUDYMODE"]).StringCellValue,
+                            Age = row.GetCell(columnMap["AGE"]).StringCellValue,
                             CampusCode = row.GetCell(columnMap["CAMPUS_CODE"]).StringCellValue,
-                            ProfPostFlag = row.GetCell(columnMap["PROFPOST_FLAG"]).StringCellValue,
+                            ProfpostFlag = row.GetCell(columnMap["PROFPOST_FLAG"]).StringCellValue,
                             ProgramType = row.GetCell(columnMap["PROGRAM_TYPE"]).StringCellValue,
-                            AcreditedProvider = row.GetCell(columnMap["ACCREDITING_PROVIDER"]).StringCellValue,
-                            OpenDate = row.GetCell(columnMap["CRSE_OPEN_DATE"]).StringCellValue,
+                            AccreditingProvider = row.GetCell(columnMap["ACCREDITING_PROVIDER"]).StringCellValue,
+                            CrseOpenDate = row.GetCell(columnMap["CRSE_OPEN_DATE"]).StringCellValue,
                         }
                     );
                 }
@@ -72,18 +72,22 @@ namespace GovUk.Education.ManageCourses.Xls
                     var row = sheet.GetRow(dataRowIndex);
                     institutions.Add(new UcasInstitution
                         {
-                            InstCode = row.GetCell(columnMap["INST_NAME"]).StringCellValue,
-                            FullName = row.GetCell(columnMap["INST_FULL"]).StringCellValue,
+                            InstCode = row.GetCell(columnMap["INST_CODE"]).StringCellValue,
+                            InstName = row.GetCell(columnMap["INST_NAME"]).StringCellValue,
+                            InstBig = row.GetCell(columnMap["INST_BIG"]).StringCellValue,
+                            InstFull = row.GetCell(columnMap["INST_FULL"]).StringCellValue,
                             InstType = row.GetCell(columnMap["INST_TYPE"]).StringCellValue,
-                            Address1 = row.GetCell(columnMap["ADDR_1"]).StringCellValue,
-                            Address2 = row.GetCell(columnMap["ADDR_2"]).StringCellValue,
-                            Address3 = row.GetCell(columnMap["ADDR_3"]).StringCellValue,
-                            Address4 = row.GetCell(columnMap["ADDR_4"]).StringCellValue,
-                            PostCode = row.GetCell(columnMap["POSTCODE"]).StringCellValue,
+                            Addr1 = row.GetCell(columnMap["ADDR_1"]).StringCellValue,
+                            Addr2 = row.GetCell(columnMap["ADDR_2"]).StringCellValue,
+                            Addr3 = row.GetCell(columnMap["ADDR_3"]).StringCellValue,
+                            Addr4 = row.GetCell(columnMap["ADDR_4"]).StringCellValue,
+                            Postcode = row.GetCell(columnMap["POSTCODE"]).StringCellValue,
                             ContactName = row.GetCell(columnMap["CONTACT_NAME"]).StringCellValue,
+                            YearCode = row.GetCell(columnMap["YEAR_CODE"]).StringCellValue,
                             Url = row.GetCell(columnMap["URL"]).StringCellValue,
                             Scitt = row.GetCell(columnMap["SCITT"]).StringCellValue,
-                            AcreditedProvider = row.GetCell(columnMap["ACCREDITING_PROVIDER"]).StringCellValue,
+                            AccreditingProvider = row.GetCell(columnMap["ACCREDITING_PROVIDER"]).StringCellValue,
+                            SchemeMember = row.GetCell(columnMap["SCHEME_MEMBER"]).StringCellValue
                         }
                     );
                 }
@@ -115,8 +119,9 @@ namespace GovUk.Education.ManageCourses.Xls
                     courseSubjects.Add(new UcasCourseSubject
                     {
                         InstCode = row.GetCell(columnMap["INST_CODE"]).StringCellValue,
-                        CourseCode = row.GetCell(columnMap["CRSE_CODE"]).StringCellValue,
+                        CrseCode = row.GetCell(columnMap["CRSE_CODE"]).StringCellValue,
                         SubjectCode = row.GetCell(columnMap["SUBJECT_CODE"]).StringCellValue,
+                        YearCode = row.GetCell(columnMap["YEAR_CODE"]).StringCellValue
                     }
                     );
                 }
@@ -183,14 +188,15 @@ namespace GovUk.Education.ManageCourses.Xls
                             InstCode = row.GetCell(columnMap["INST_CODE"]).StringCellValue,
                             CampusCode = row.GetCell(columnMap["CAMPUS_CODE"]).StringCellValue,
                             CampusName = row.GetCell(columnMap["CAMPUS_NAME"]).StringCellValue,
-                            Address1 = row.GetCell(columnMap["ADDR_1"]).StringCellValue,
-                            Address2 = row.GetCell(columnMap["ADDR_2"]).StringCellValue,
-                            Address3 = row.GetCell(columnMap["ADDR_3"]).StringCellValue,
-                            Address4 = row.GetCell(columnMap["ADDR_4"]).StringCellValue,
-                            PostCode = row.GetCell(columnMap["POSTCODE"]).StringCellValue,
+                            Addr1 = row.GetCell(columnMap["ADDR_1"]).StringCellValue,
+                            Addr2 = row.GetCell(columnMap["ADDR_2"]).StringCellValue,
+                            Addr3 = row.GetCell(columnMap["ADDR_3"]).StringCellValue,
+                            Addr4 = row.GetCell(columnMap["ADDR_4"]).StringCellValue,
+                            Postcode = row.GetCell(columnMap["POSTCODE"]).StringCellValue,
                             TelNo = row.GetCell(columnMap["TEL_NO"]).StringCellValue,
+                            Email = row.GetCell(columnMap["EMAIL"]).StringCellValue,
                             RegionCode = row.GetCell(columnMap["REGION_CODE"]).StringCellValue,
-                    }
+                        }
                     );
                 }
             }
@@ -221,10 +227,11 @@ namespace GovUk.Education.ManageCourses.Xls
                     courseNotes.Add(new UcasCourseNote
                         {
                             InstCode = row.GetCell(columnMap["INST_CODE"]).StringCellValue,
-                            CourseCode = row.GetCell(columnMap["CRSE_CODE"]).StringCellValue,
+                            CrseCode = row.GetCell(columnMap["CRSE_CODE"]).StringCellValue,
                             NoteNo = row.GetCell(columnMap["NOTE_NO"]).StringCellValue,
                             NoteType = row.GetCell(columnMap["NOTE_TYPE"]).StringCellValue,
-                    }
+                            YearCode = row.GetCell(columnMap["YEAR_CODE"]).StringCellValue
+                        }
                     );
                 }
             }
@@ -258,6 +265,7 @@ namespace GovUk.Education.ManageCourses.Xls
                             NoteNo = row.GetCell(columnMap["NOTE_NO"]).StringCellValue,
                             NoteType = row.GetCell(columnMap["NOTE_TYPE"]).StringCellValue,
                             LineText = row.GetCell(columnMap["LINE_TEXT"]).StringCellValue,
+                            YearCode = row.GetCell(columnMap["YEAR_CODE"]).StringCellValue
                         }
                     );
                 }
