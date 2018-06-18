@@ -14,6 +14,10 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             app.HelpOption("-?|-h|--help");
             app.Execute(args);
 
+            var users = new CsvReader().ReadUsers(folderOption.Value());
+            var organisations = new CsvReader().ReadOrganisations(folderOption.Value());
+            var organisationInstitutions = new CsvReader().ReadOrganisationInstitutions(folderOption.Value());
+            var organisationUsers = new CsvReader().ReadOrganisationUsers(folderOption.Value());
             var courses = new XlsReader().ReadCourses(folderOption.Value());
             var institutions = new XlsReader().ReadInstitutions(folderOption.Value());
             var courseSubjects = new XlsReader().ReadCourseSubjects(folderOption.Value());
@@ -30,7 +34,11 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
                 Subjects = new ObservableCollection<UcasSubject>(subjects),
                 Campuses = new ObservableCollection<UcasCampus>(campuses),
                 CourseNotes = new ObservableCollection<UcasCourseNote>(courseNotes),
-                NoteTexts = new ObservableCollection<UcasNoteText>(noteTexts)
+                NoteTexts = new ObservableCollection<UcasNoteText>(noteTexts),
+                Users = new ObservableCollection<McUser>(users),
+                Organisations = new ObservableCollection<McOrganisation>(organisations),
+                OrganisationInstitutions = new ObservableCollection<McOrganisationInstitution>(organisationInstitutions),
+                OrganisationUsers = new ObservableCollection<McOrganisationUser>(organisationUsers)
             };
             new ManageApi().SendToManageCoursesApi(payload);
         }
