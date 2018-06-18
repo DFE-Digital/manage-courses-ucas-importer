@@ -26,9 +26,9 @@ namespace GovUk.Education.ManageCourses.Xls
                 var record = csv.GetRecord<User>();
                 users.Add(new McUser
                 {
-                    FirstName = record.first_name,
-                    LastName = record.last_name,
-                    Email = record.email
+                    FirstName = record.first_name.Trim(),
+                    LastName = record.last_name.Trim(),
+                    Email = record.email.Trim()
                 });
             }
             Console.Out.WriteLine(users.Count + " users loaded from csv");
@@ -50,8 +50,8 @@ namespace GovUk.Education.ManageCourses.Xls
                 var record = csv.GetRecord<Organisation>();
                 organisations.Add(new McOrganisation
                 {
-                    NctlId = record.nctl_id,
-                    Name = record.name
+                    NctlId = record.nctl_id.Trim(),
+                    Name = record.name.Trim()
                 });
             }
             Console.Out.WriteLine(organisations.Count + " organisations loaded from csv");
@@ -73,8 +73,8 @@ namespace GovUk.Education.ManageCourses.Xls
                 var record = csv.GetRecord<OrganisationInstitution>();
                 organisationInstitutions.Add(new McOrganisationInstitution
                 {
-                    NctlId = record.nctl_id,
-                    InstitutionCode = record.institution_code
+                    NctlId = record.nctl_id.Trim(),
+                    InstitutionCode = record.institution_code.Trim()
                 });
             }
    
@@ -97,8 +97,8 @@ namespace GovUk.Education.ManageCourses.Xls
                 var record = csv.GetRecord<OrganisationUser>();
                 organisationUsers.Add(new McOrganisationUser
                 {
-                    NctlId = record.nctl_id,
-                    Email = record.email
+                    NctlId = record.nctl_id.Trim(),
+                    Email = record.email.Trim()
                 });
             }
 
