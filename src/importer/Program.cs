@@ -25,6 +25,7 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             var campuses = new XlsReader().ReadCampuses(folderOption.Value());
             var courseNotes = new XlsReader().ReadCourseNotes(folderOption.Value());
             var noteTexts = new XlsReader().ReadNoteText(folderOption.Value());
+            var providerMappers = new XlsReader().ReadProviderMappers(folderOption.Value());
 
             var payload = new Payload
             {
@@ -38,7 +39,8 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
                 Users = new ObservableCollection<McUser>(users),
                 Organisations = new ObservableCollection<McOrganisation>(organisations),
                 OrganisationInstitutions = new ObservableCollection<McOrganisationInstitution>(organisationInstitutions),
-                OrganisationUsers = new ObservableCollection<McOrganisationUser>(organisationUsers)
+                OrganisationUsers = new ObservableCollection<McOrganisationUser>(organisationUsers),
+                Mappers = new ObservableCollection<ProviderMapper>(providerMappers)
             };
             new ManageApi().SendToManageCoursesApi(payload);
         }

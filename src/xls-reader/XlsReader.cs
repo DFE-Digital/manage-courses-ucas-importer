@@ -273,5 +273,40 @@ namespace GovUk.Education.ManageCourses.Xls
             Console.Out.WriteLine(noteTexts.Count + " note texts loaded from xls");
             return noteTexts;
         }
+        public List<ProviderMapper> ReadProviderMappers(string folder)
+        {
+            var file = new FileInfo(Path.Combine(folder, "ProviderMapper.xls"));
+            Console.WriteLine("Reading provider mapper xls file from: " + file.FullName);
+
+            var providerMappers = new List<ProviderMapper>();
+            using (var stream = new FileStream(file.FullName, FileMode.Open))
+            {
+                var wb = new HSSFWorkbook(stream);
+                var sheet = wb.GetSheetAt(0);
+                var header = sheet.GetRow(0);
+
+                var columnMap = header.Cells.ToDictionary(c => c.StringCellValue, c => c.ColumnIndex);
+                for (int dataRowIndex = 1; dataRowIndex <= sheet.LastRowNum; dataRowIndex++)
+                {
+                    if (sheet.GetRow(dataRowIndex) == null)
+                    {
+                        continue;
+                    }
+
+                    var row = sheet.GetRow(dataRowIndex);
+                    providerMappers.Add(new ProviderMapper
+                        {
+                            NctlId = row.GetCell(columnMap["NCTL_ID"]).NumericCellValue.ToString(),
+                            UcasCode = row.GetCell(columnMap["UCAS_CODE"]).StringCellValue.Trim(),
+                            Urn = (int)row.GetCell(columnMap["URN"]).NumericCellValue,
+                            Type = row.GetCell(columnMap["Type"]).StringCellValue.Trim(),
+                            InstitutionName = row.GetCell(columnMap["Institution_Name"]).StringCellValue.Trim(),
+                        }
+                    );
+                }
+            }
+            Console.Out.WriteLine(providerMappers.Count + " note texts loaded from xls");
+            return providerMappers;
+        }
     }
 }
