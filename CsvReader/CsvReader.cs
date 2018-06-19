@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.DrawingCore.Text;
 using System.IO;
+using System.Linq;
 using GovUk.Education.ManageCourses.ApiClient;
 using GovUk.Education.ManageCourses.Csv.Domain;
 using NPOI.SS.Formula.Functions;
@@ -95,10 +96,16 @@ namespace GovUk.Education.ManageCourses.Xls
             while (csv.Read())
             {
                 var record = csv.GetRecord<OrganisationUser>();
+                var nctlId = record.nctl_id.Trim();
+                var email = record.email.Trim();
+                if (organisationUsers.Any(ou => ou.NctlId == nctlId && ou.Email == email))
+                {
+                    continue; // skip duplicates
+                }
                 organisationUsers.Add(new McOrganisationUser
                 {
-                    NctlId = record.nctl_id.Trim(),
-                    Email = record.email.Trim()
+                    NctlId = nctlId,
+                    Email = email
                 });
             }
 
