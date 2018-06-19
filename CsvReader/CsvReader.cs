@@ -58,7 +58,8 @@ namespace GovUk.Education.ManageCourses.Xls
             Console.Out.WriteLine(organisations.Count + " organisations loaded from csv");
             return organisations;
         }
-        public List<McOrganisationInstitution> ReadOrganisationInstitutions(string folder)
+        public List<McOrganisationInstitution> ReadOrganisationInstitutions(string folder,
+            IList<McOrganisation> organisations)
         {
             var fullFilename = Path.Combine(folder, "mc-organisations_institutions.csv");
             Console.WriteLine("Reading organisation institutions csv file from: " + fullFilename);
@@ -69,8 +70,10 @@ namespace GovUk.Education.ManageCourses.Xls
             var csv = new CsvHelper.CsvReader(textReader);
             csv.Read();
             csv.ReadHeader();
+            int rowIndex = 1;
             while (csv.Read())
             {
+                rowIndex++;
                 var record = csv.GetRecord<OrganisationInstitution>();
                 var nctlId = record.nctl_id.Trim();
                 var institutionCode = record.institution_code.Trim();
@@ -78,13 +81,20 @@ namespace GovUk.Education.ManageCourses.Xls
                 {
                     continue; // skip duplicates
                 }
+
+                if (!organisations.Any(o => o.NctlId == nctlId))
+                {
+                    Console.Out.WriteLine($"Skipped row {rowIndex} - NCTL_ID {nctlId} not found in organisation data");
+                    continue;
+                }
+
                 organisationInstitutions.Add(new McOrganisationInstitution
                 {
                     NctlId = nctlId,
                     InstitutionCode = institutionCode
                 });
             }
-   
+
             Console.Out.WriteLine(organisationInstitutions.Count + " organisation institutions loaded from csv");
             return organisationInstitutions;
         }

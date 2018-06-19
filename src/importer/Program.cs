@@ -16,7 +16,7 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
 
             var users = new CsvReader().ReadUsers(folderOption.Value());
             var organisations = new CsvReader().ReadOrganisations(folderOption.Value());
-            var organisationInstitutions = new CsvReader().ReadOrganisationInstitutions(folderOption.Value());
+            var organisationInstitutions = new CsvReader().ReadOrganisationInstitutions(folderOption.Value(), organisations);
             var organisationUsers = new CsvReader().ReadOrganisationUsers(folderOption.Value());
             var courses = new XlsReader().ReadCourses(folderOption.Value());
             var institutions = new XlsReader().ReadInstitutions(folderOption.Value());
