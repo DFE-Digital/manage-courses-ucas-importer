@@ -72,10 +72,16 @@ namespace GovUk.Education.ManageCourses.Xls
             while (csv.Read())
             {
                 var record = csv.GetRecord<OrganisationInstitution>();
+                var nctlId = record.nctl_id.Trim();
+                var institutionCode = record.institution_code.Trim();
+                if (organisationInstitutions.Any(oi => oi.NctlId == nctlId && oi.InstitutionCode == institutionCode))
+                {
+                    continue; // skip duplicates
+                }
                 organisationInstitutions.Add(new McOrganisationInstitution
                 {
-                    NctlId = record.nctl_id.Trim(),
-                    InstitutionCode = record.institution_code.Trim()
+                    NctlId = nctlId,
+                    InstitutionCode = institutionCode
                 });
             }
    
