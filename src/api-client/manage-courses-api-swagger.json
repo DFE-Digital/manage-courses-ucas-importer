@@ -154,6 +154,12 @@
           "items": {
             "$ref": "#/definitions/McUser"
           }
+        },
+        "mappers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProviderMapper"
+          }
         }
       }
     },
@@ -485,6 +491,36 @@
           "type": "string"
         },
         "email": {
+          "type": "string"
+        }
+      }
+    },
+    "ProviderMapper": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "urn"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "nctlId": {
+          "type": "string"
+        },
+        "ucasCode": {
+          "type": "string"
+        },
+        "urn": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "type": {
+          "type": "string"
+        },
+        "institutionName": {
           "type": "string"
         }
       }
