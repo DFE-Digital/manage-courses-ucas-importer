@@ -128,7 +128,7 @@ namespace GovUk.Education.ManageCourses.Xls
                     continue; // skip duplicates
                 }
 
-                if (organisations.Any(o => o.NctlId == record.nctl_id && users.Any(u => u.Email == record.email))) //check to see if organisation record exists
+                if (organisations.Any(o => o.NctlId == record.nctl_id && users.Any(u => u.Email == record.email))) //check to see if organisation and user records exists
                 {
                     organisationUsers.Add(new McOrganisationUser
                     {
