@@ -9,7 +9,7 @@ namespace GovUk.Education.ManageCourses.Csv.Domain
     /// </summary>
     internal class OrganisationInstitution
     {
-        public string nctl_id { get; set; }
+        public string org_id { get; set; }
         public string institution_code { get; set; }
     }
 }

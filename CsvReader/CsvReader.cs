@@ -51,7 +51,7 @@ namespace GovUk.Education.ManageCourses.Xls
                 var record = csv.GetRecord<Organisation>();
                 organisations.Add(new McOrganisation
                 {
-                    NctlId = record.nctl_id.Trim(),
+                    OrgId = record.id.Trim(),
                     Name = record.name.Trim()
                 });
             }
@@ -76,29 +76,24 @@ namespace GovUk.Education.ManageCourses.Xls
             {
                 rowIndex++;
                 var record = csv.GetRecord<OrganisationInstitution>();
-                var nctlId = record.nctl_id.Trim();
+                var nctlId = record.org_id.Trim();
                 var institutionCode = record.institution_code.Trim();
-                if (organisationInstitutions.Any(oi => oi.NctlId == nctlId && oi.InstitutionCode == institutionCode))
+                if (organisationInstitutions.Any(oi => oi.OrgId == nctlId && oi.InstitutionCode == institutionCode))
                 {
                     continue; // skip duplicates
                 }
 
-                if (!organisations.Any(o => o.NctlId == nctlId))
+                if (!organisations.Any(o => o.OrgId == nctlId))
                 {
                     Console.Out.WriteLine($"Skipped row {rowIndex} - NCTL_ID {nctlId} not found in organisation data");
                     continue;
                 }
 
-                organisationInstitutions.Add(new McOrganisationInstitution
-                {
-                    NctlId = nctlId,
-                    InstitutionCode = institutionCode
-                });
-                if (organisations.Any(o => o.NctlId == record.nctl_id))//check to see if organisation record exists
+                if (organisations.Any(o => o.OrgId == record.org_id))//check to see if organisation record exists
                 {
                     organisationInstitutions.Add(new McOrganisationInstitution
                     {
-                        NctlId = record.nctl_id.Trim(),
+                        OrgId = record.org_id.Trim(),
                         InstitutionCode = record.institution_code.Trim()
                     });
                 }
@@ -121,18 +116,18 @@ namespace GovUk.Education.ManageCourses.Xls
             while (csv.Read())
             {
                 var record = csv.GetRecord<OrganisationUser>();
-                var nctlId = record.nctl_id.Trim();
+                var nctlId = record.org_id.Trim();
                 var email = record.email.Trim();
-                if (organisationUsers.Any(ou => ou.NctlId == nctlId && ou.Email == email))
+                if (organisationUsers.Any(ou => ou.OrgId == nctlId && ou.Email == email))
                 {
                     continue; // skip duplicates
                 }
 
-                if (organisations.Any(o => o.NctlId == record.nctl_id && users.Any(u => u.Email == record.email))) //check to see if organisation and user records exists
+                if (organisations.Any(o => o.OrgId == record.org_id && users.Any(u => u.Email == record.email))) //check to see if organisation and user records exists
                 {
                     organisationUsers.Add(new McOrganisationUser
                     {
-                        NctlId = nctlId,
+                        OrgId = nctlId,
                         Email = email
                     });
                 }
