@@ -25,6 +25,11 @@ namespace GovUk.Education.ManageCourses.Xls
             while (csv.Read())
             {
                 var record = csv.GetRecord<User>();
+                if (users.Any(u => u.Email == record.email.Trim()))
+                {
+                    //duplicate user so skip
+                    continue;
+                }
                 users.Add(new McUser
                 {
                     FirstName = record.first_name.Trim(),
