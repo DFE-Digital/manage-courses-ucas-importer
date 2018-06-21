@@ -58,8 +58,9 @@ namespace GovUk.Education.ManageCourses.Xls
             Console.Out.WriteLine(organisations.Count + " organisations loaded from csv");
             return organisations;
         }
-        public List<McOrganisationInstitution> ReadOrganisationInstitutions(string folder,
-            IList<McOrganisation> organisations)
+
+        // TODO: review
+        public List<McOrganisationInstitution> ReadOrganisationInstitutions(string folder, List<McOrganisation> organisations)
         {
             var fullFilename = Path.Combine(folder, "mc-organisations_institutions.csv");
             Console.WriteLine("Reading organisation institutions csv file from: " + fullFilename);
@@ -93,12 +94,20 @@ namespace GovUk.Education.ManageCourses.Xls
                     NctlId = nctlId,
                     InstitutionCode = institutionCode
                 });
+                if (organisations.Any(o => o.NctlId == record.nctl_id))//check to see if organisation record exists
+                {
+                    organisationInstitutions.Add(new McOrganisationInstitution
+                    {
+                        NctlId = record.nctl_id.Trim(),
+                        InstitutionCode = record.institution_code.Trim()
+                    });
+                }
             }
 
             Console.Out.WriteLine(organisationInstitutions.Count + " organisation institutions loaded from csv");
             return organisationInstitutions;
         }
-        public List<McOrganisationUser> ReadOrganisationUsers(string folder)
+        public List<McOrganisationUser> ReadOrganisationUsers(string folder, List<McOrganisation> organisations, List<McUser> users)
         {
             var fullFilename = Path.Combine(folder, "mc-organisations_users.csv");
             Console.WriteLine("Reading organisation users csv file from: " + fullFilename);
@@ -118,11 +127,15 @@ namespace GovUk.Education.ManageCourses.Xls
                 {
                     continue; // skip duplicates
                 }
-                organisationUsers.Add(new McOrganisationUser
+
+                if (organisations.Any(o => o.NctlId == record.nctl_id && users.Any(u => u.Email == record.email))) //check to see if organisation and user records exists
                 {
-                    NctlId = nctlId,
-                    Email = email
-                });
+                    organisationUsers.Add(new McOrganisationUser
+                    {
+                        NctlId = nctlId,
+                        Email = email
+                    });
+                }
             }
 
             Console.Out.WriteLine(organisationUsers.Count + " organisation users loaded from csv");
