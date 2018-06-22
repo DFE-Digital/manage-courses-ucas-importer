@@ -264,6 +264,121 @@
         },
         "schemeMember": {
           "type": "string"
+        },
+        "mcOrganisationInstitutions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/McOrganisationInstitution"
+          }
+        }
+      }
+    },
+    "McOrganisationInstitution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "orgId": {
+          "type": "string"
+        },
+        "institutionCode": {
+          "type": "string"
+        },
+        "mcOrganisation": {
+          "$ref": "#/definitions/McOrganisation"
+        },
+        "ucasInstitution": {
+          "$ref": "#/definitions/UcasInstitution"
+        }
+      }
+    },
+    "McOrganisation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "orgId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "mcOrganisationUsers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/McOrganisationUser"
+          }
+        },
+        "mcOrganisationInstitutions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/McOrganisationInstitution"
+          }
+        }
+      }
+    },
+    "McOrganisationUser": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "orgId": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "mcUser": {
+          "$ref": "#/definitions/McUser"
+        },
+        "mcOrganisation": {
+          "$ref": "#/definitions/McOrganisation"
+        }
+      }
+    },
+    "McUser": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "mcOrganisationUsers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/McOrganisationUser"
+          }
         }
       }
     },
@@ -416,85 +531,6 @@
         }
       }
     },
-    "McOrganisation": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "id"
-      ],
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "nctlId": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "McOrganisationInstitution": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "id"
-      ],
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "nctlId": {
-          "type": "string"
-        },
-        "institutionCode": {
-          "type": "string"
-        }
-      }
-    },
-    "McOrganisationUser": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "id"
-      ],
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "nctlId": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        }
-      }
-    },
-    "McUser": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "id"
-      ],
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "firstName": {
-          "type": "string"
-        },
-        "lastName": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        }
-      }
-    },
     "ProviderMapper": {
       "type": "object",
       "additionalProperties": false,
@@ -507,7 +543,7 @@
           "type": "integer",
           "format": "int32"
         },
-        "nctlId": {
+        "orgId": {
           "type": "string"
         },
         "ucasCode": {

@@ -296,7 +296,7 @@ namespace GovUk.Education.ManageCourses.Xls
                     var row = sheet.GetRow(dataRowIndex);
                     providerMappers.Add(new ProviderMapper
                         {
-                            NctlId = row.GetCell(columnMap["NCTL_ID"]).NumericCellValue.ToString(),
+                            OrgId = row.GetCell(columnMap["ORG_ID"]).NumericCellValue.ToString(),
                             UcasCode = row.GetCell(columnMap["UCAS_CODE"]).StringCellValue.Trim(),
                             Urn = (int)row.GetCell(columnMap["URN"]).NumericCellValue,
                             Type = row.GetCell(columnMap["Type"]).StringCellValue.Trim(),
