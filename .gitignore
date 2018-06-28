@@ -30,6 +30,8 @@ _ReSharper*/
 .vs/
 #Nuget packages folder
 packages/
+
+#reference data we don't want in VC
 data/GTTR_CAMPUS.xls
 data/GTTR_CRSE_SUBJECT.xls
 data/GTTR_CRSE.xls
