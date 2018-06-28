@@ -6,9 +6,9 @@
     "description": "An API for managing course data",
     "version": "v1"
   },
-  "host": "localhost:6001",
+  "host": "publish-teacher-training-courses-api.education.gov.uk",
   "schemes": [
-    "http"
+    "https"
   ],
   "consumes": [
     "application/json"
@@ -22,17 +22,13 @@
         "tags": [
           "Data"
         ],
-        "summary": "Exports the data.",
         "operationId": "Data_Export",
         "responses": {
           "200": {
             "x-nullable": true,
-            "description": "The exported data",
+            "description": "",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Course"
-              }
+              "$ref": "#/definitions/OrganisationCourses"
             }
           }
         }
@@ -41,7 +37,6 @@
         "tags": [
           "Data"
         ],
-        "summary": "Imports the data.",
         "operationId": "Data_Import",
         "parameters": [
           {
@@ -63,57 +58,126 @@
     }
   },
   "definitions": {
-    "Course": {
+    "OrganisationCourses": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "title": {
+        "organisationName": {
+          "type": "string"
+        },
+        "organisationId": {
           "type": "string"
         },
         "ucasCode": {
           "type": "string"
         },
-        "organisationName": {
+        "providerCourses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProviderCourse"
+          }
+        }
+      }
+    },
+    "ProviderCourse": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "accreditingProviderName": {
+          "type": "string"
+        },
+        "accreditingProviderId": {
+          "type": "string"
+        },
+        "courseDetails": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CourseDetail"
+          }
+        }
+      }
+    },
+    "CourseDetail": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "courseTitle": {
+          "type": "string"
+        },
+        "route": {
+          "type": "string"
+        },
+        "subjects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ageRange": {
+          "type": "string"
+        },
+        "qualification": {
           "type": "string"
         },
         "variants": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/Variant"
+            "$ref": "#/definitions/CourseVariant"
           }
         }
       }
     },
-    "Variant": {
+    "CourseVariant": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "providerCode": {
-          "type": "string"
-        },
-        "providerName": {
-          "type": "string"
-        },
         "courseCode": {
           "type": "string"
         },
-        "profpostFlags": {
+        "ucasCode": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "trainingProviderCode": {
+          "type": "string"
+        },
+        "trainingProgramCode": {
+          "type": "string"
+        },
+        "profPostFlag": {
+          "type": "string"
+        },
+        "programType": {
+          "type": "string"
+        },
+        "studyMode": {
+          "type": "string"
+        },
+        "campuses": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/Campus"
           }
         },
-        "programTypes": {
+        "subjects": {
           "type": "array",
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "Campus": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
         },
-        "studyModes": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        "code": {
+          "type": "string"
         },
         "address1": {
           "type": "string"
@@ -127,7 +191,10 @@
         "address4": {
           "type": "string"
         },
-        "postcode": {
+        "postCode": {
+          "type": "string"
+        },
+        "courseOpenDate": {
           "type": "string"
         }
       }
