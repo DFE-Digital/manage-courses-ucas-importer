@@ -102,6 +102,7 @@ namespace GovUk.Education.ManageCourses.Xls
             Console.WriteLine("Reading course subject xls file from: " + file.FullName);
 
             var courseSubjects = new List<UcasCourseSubject>();
+            int skipCount = 0;
             using (var stream = new FileStream(file.FullName, FileMode.Open))
             {
                 var wb = new HSSFWorkbook(stream);
@@ -126,14 +127,16 @@ namespace GovUk.Education.ManageCourses.Xls
                     };
                     if (!courses.Any(c => c.InstCode == ucasCourseSubject.InstCode && c.CrseCode == ucasCourseSubject.CrseCode))
                     {
-                        Console.Out.WriteLine($"UcasCourseSubject skipped - invalid inst_code/crse_code combination: {ucasCourseSubject.InstCode}, {ucasCourseSubject.CrseCode}");
+                        skipCount++;
+                        Console.Out.WriteLine($"  UcasCourseSubject skipped - invalid inst_code/crse_code combination: {ucasCourseSubject.InstCode}, {ucasCourseSubject.CrseCode}");
                         continue;
                     }
                     courseSubjects.Add(ucasCourseSubject
                     );
                 }
             }
-            Console.Out.WriteLine(courseSubjects.Count + " course subjects loaded from xls");
+            Console.Out.WriteLine(courseSubjects.Count + " course-subjects loaded from xls");
+            Console.Out.WriteLine($"  {skipCount} course-subjects rows skipped due to integrity violations");
             return courseSubjects;
         }
         public List<UcasSubject> ReadSubjects(string folder)
@@ -206,7 +209,7 @@ namespace GovUk.Education.ManageCourses.Xls
                     };
                     if (!institutions.Any(i => i.InstCode == ucasCampus.InstCode))
                     {
-                        Console.Out.WriteLine($"Campus '{ucasCampus.CampusCode}' skipped - invalid inst_code {ucasCampus.InstCode}");
+                        Console.Out.WriteLine($"  Campus '{ucasCampus.CampusCode}' skipped - invalid inst_code {ucasCampus.InstCode}");
                         continue;
                     }
                     campuses.Add(ucasCampus);
