@@ -95,7 +95,8 @@ namespace GovUk.Education.ManageCourses.Xls
             Console.Out.WriteLine(institutions.Count + " intitutions loaded from xls");
             return institutions;
         }
-        public List<UcasCourseSubject> ReadCourseSubjects(string folder)
+
+        public List<UcasCourseSubject> ReadCourseSubjects(string folder, IList<UcasCourse> courses)
         {
             var file = new FileInfo(Path.Combine(folder, "GTTR_CRSE_SUBJECT.xls"));
             Console.WriteLine("Reading course subject xls file from: " + file.FullName);
@@ -116,13 +117,19 @@ namespace GovUk.Education.ManageCourses.Xls
                     }
 
                     var row = sheet.GetRow(dataRowIndex);
-                    courseSubjects.Add(new UcasCourseSubject
+                    var ucasCourseSubject = new UcasCourseSubject
                     {
                         InstCode = row.GetCell(columnMap["INST_CODE"]).StringCellValue.Trim(),
                         CrseCode = row.GetCell(columnMap["CRSE_CODE"]).StringCellValue.Trim(),
                         SubjectCode = row.GetCell(columnMap["SUBJECT_CODE"]).StringCellValue.Trim(),
                         YearCode = row.GetCell(columnMap["YEAR_CODE"]).StringCellValue.Trim()
+                    };
+                    if (!courses.Any(c => c.InstCode == ucasCourseSubject.InstCode && c.CrseCode == ucasCourseSubject.CrseCode))
+                    {
+                        Console.Out.WriteLine($"UcasCourseSubject skipped - invalid inst_code/crse_code combination: {ucasCourseSubject.InstCode}, {ucasCourseSubject.CrseCode}");
+                        continue;
                     }
+                    courseSubjects.Add(ucasCourseSubject
                     );
                 }
             }
