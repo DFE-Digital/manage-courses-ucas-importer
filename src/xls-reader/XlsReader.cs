@@ -30,6 +30,7 @@ namespace GovUk.Education.ManageCourses.Xls
                     }
 
                     var row = sheet.GetRow(dataRowIndex);
+                    var accreditingProvider = row.GetCell(columnMap["ACCREDITING_PROVIDER"]).StringCellValue.Trim();
                     var ucasCourse = new UcasCourse
                     {
                         InstCode = row.GetCell(columnMap["INST_CODE"]).StringCellValue.Trim(),
@@ -40,7 +41,7 @@ namespace GovUk.Education.ManageCourses.Xls
                         CampusCode = row.GetCell(columnMap["CAMPUS_CODE"]).StringCellValue.Trim(),
                         ProfpostFlag = row.GetCell(columnMap["PROFPOST_FLAG"]).StringCellValue.Trim(),
                         ProgramType = row.GetCell(columnMap["PROGRAM_TYPE"]).StringCellValue.Trim(),
-                        AccreditingProvider = row.GetCell(columnMap["ACCREDITING_PROVIDER"]).StringCellValue.Trim(),
+                        AccreditingProvider = accreditingProvider == "" ? null : accreditingProvider,
                         CrseOpenDate = row.GetCell(columnMap["CRSE_OPEN_DATE"]).StringCellValue.Trim(),
                     };
                     if (!campuses.Any(c => c.InstCode == ucasCourse.InstCode && c.CampusCode == ucasCourse.CampusCode))
