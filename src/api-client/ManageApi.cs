@@ -10,7 +10,7 @@ namespace GovUk.Education.ManageCourses.ApiClient
         {
             Console.WriteLine("Posting to api...");
             var client = new ManageCoursesApiClient();            
-            client.ImportAsync(payload).Wait();
+            client.Data_ImportAsync(payload).Wait();
             Console.WriteLine("Done.");
         }
     }
