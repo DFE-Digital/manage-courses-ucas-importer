@@ -9,7 +9,7 @@ namespace GovUk.Education.ManageCourses.Xls
 {
     public class XlsReader
     {
-        public List<UcasCourse> ReadCourses(string folder)
+        public List<UcasCourse> ReadCourses(string folder, IList<UcasCampus> campuses)
         {
             var file = new FileInfo(Path.Combine(folder, "GTTR_CRSE.xls"));
             Console.WriteLine("Reading course xls file from: " + file.FullName);
@@ -43,6 +43,11 @@ namespace GovUk.Education.ManageCourses.Xls
                         AccreditingProvider = row.GetCell(columnMap["ACCREDITING_PROVIDER"]).StringCellValue.Trim(),
                         CrseOpenDate = row.GetCell(columnMap["CRSE_OPEN_DATE"]).StringCellValue.Trim(),
                     };
+                    if (!campuses.Any(c => c.InstCode == ucasCourse.InstCode && c.CampusCode == ucasCourse.CampusCode))
+                    {
+                        Console.Out.WriteLine($"  UcasCourse skipped - invalid campus '{ucasCourse.CampusCode}' inst_code/crse_code: {ucasCourse.InstCode}, {ucasCourse.CrseCode}");
+                        continue;
+                    }
                     courses.Add(ucasCourse);
                 }
             }
