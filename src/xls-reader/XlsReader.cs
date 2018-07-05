@@ -102,7 +102,7 @@ namespace GovUk.Education.ManageCourses.Xls
             return institutions;
         }
 
-        public List<UcasCourseSubject> ReadCourseSubjects(string folder, IList<UcasCourse> courses)
+        public List<UcasCourseSubject> ReadCourseSubjects(string folder, IList<UcasCourse> courses, IList<UcasSubject> subjects)
         {
             var file = new FileInfo(Path.Combine(folder, "GTTR_CRSE_SUBJECT.xls"));
             Console.WriteLine("Reading course subject xls file from: " + file.FullName);
@@ -135,6 +135,12 @@ namespace GovUk.Education.ManageCourses.Xls
                     {
                         skipCount++;
                         Console.Out.WriteLine($"  UcasCourseSubject skipped - invalid inst_code/crse_code combination: {ucasCourseSubject.InstCode}, {ucasCourseSubject.CrseCode}");
+                        continue;
+                    }
+                    if (!subjects.Any(c => c.SubjectCode == ucasCourseSubject.SubjectCode))
+                    {
+                        skipCount++;
+                        Console.Out.WriteLine($"  UcasCourseSubject skipped - invalid subject code: {ucasCourseSubject.SubjectCode} - inst/crse: {ucasCourseSubject.InstCode}, {ucasCourseSubject.CrseCode}");
                         continue;
                     }
                     courseSubjects.Add(ucasCourseSubject
