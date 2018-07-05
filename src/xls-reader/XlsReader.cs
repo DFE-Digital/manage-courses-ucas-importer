@@ -30,7 +30,7 @@ namespace GovUk.Education.ManageCourses.Xls
                     }
 
                     var row = sheet.GetRow(dataRowIndex);
-                    courses.Add(new UcasCourse
+                    var ucasCourse = new UcasCourse
                     {
                         InstCode = row.GetCell(columnMap["INST_CODE"]).StringCellValue.Trim(),
                         CrseCode = row.GetCell(columnMap["CRSE_CODE"]).StringCellValue.Trim(),
@@ -42,8 +42,8 @@ namespace GovUk.Education.ManageCourses.Xls
                         ProgramType = row.GetCell(columnMap["PROGRAM_TYPE"]).StringCellValue.Trim(),
                         AccreditingProvider = row.GetCell(columnMap["ACCREDITING_PROVIDER"]).StringCellValue.Trim(),
                         CrseOpenDate = row.GetCell(columnMap["CRSE_OPEN_DATE"]).StringCellValue.Trim(),
-                    }
-                    );
+                    };
+                    courses.Add(ucasCourse);
                 }
             }
             Console.Out.WriteLine(courses.Count + " courses loaded from xls");
