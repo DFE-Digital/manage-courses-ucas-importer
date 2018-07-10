@@ -23,9 +23,6 @@ mc-organisations.csv
 mc-organisations_institutions.csv
 mc-organisations_users.csv
 mc-users.csv
-
-#From NCTL analytics team
-ProviderMapper.xls
 ```
 
 3. Run in the repository root
