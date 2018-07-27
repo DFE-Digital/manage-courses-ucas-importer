@@ -33,6 +33,7 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             }
 
             // only used to avoid importing orphaned campuses
+            // i.e. we do not import institutions but need them to determine which campuses to import
             var institutions = new XlsReader().ReadInstitutions(folderOption.Value());
             
             // data to import
