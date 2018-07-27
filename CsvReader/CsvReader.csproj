@@ -7,10 +7,12 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="7.1.1" />
+    <PackageReference Include="DotNetCore.NPOI" Version="1.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\src\api-client\ApiClient.csproj" />
+  <ItemGroup>  
+    <PackageReference Include="GovUk.Education.ManageCourses.ApiClient" Version="0.2.0-split-import" />
   </ItemGroup>
 
 </Project>

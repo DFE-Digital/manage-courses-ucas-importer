@@ -7,10 +7,10 @@
 
   <ItemGroup>
     <PackageReference Include="DotNetCore.NPOI" Version="1.0.2" />
-  </ItemGroup>
+  </ItemGroup>  
 
-  <ItemGroup>
-    <ProjectReference Include="..\api-client\ApiClient.csproj" />
+  <ItemGroup>  
+    <PackageReference Include="GovUk.Education.ManageCourses.ApiClient" Version="0.2.0-split-import" />
   </ItemGroup>
-
+  
 </Project>
