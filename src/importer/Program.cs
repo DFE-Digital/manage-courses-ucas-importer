@@ -12,7 +12,7 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
         {
             var app = new CommandLineApplication();
             var folderOption = app.Option("-$|-f|--folder <folder>", "Folder to read UCAS .xls files from ", CommandOptionType.SingleValue);
-            var apiOption = app.Option("-u|--url|--api-url <url>", "URL of the ManageCourses API", CommandOptionType.SingleValue);
+            var urlOption = app.Option("-u|--url|--api-url <url>", "URL of the ManageCourses API", CommandOptionType.SingleValue);
             var apiKeyOption = app.Option("-k|--key|--api-key <key>", "Admin Key for the ManageCourses API", CommandOptionType.SingleValue);
             
             app.HelpOption("-?|-h|--help");
@@ -23,7 +23,7 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
                 return;
             }
 
-            if (!apiOption.HasValue()) {
+            if (!urlOption.HasValue()) {
                 Console.WriteLine("Missing --url option");
                 return;
             }
@@ -55,7 +55,7 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             };
             
             var apiKey = apiKeyOption.HasValue() ? apiKeyOption.Value() : "";
-            new ManageApi(apiOption.Value(), apiKey).PostPayload(payload);
+            new ManageApi(urlOption.Value(), apiKey).PostPayload(payload);
         }
     }
 }

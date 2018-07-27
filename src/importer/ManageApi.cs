@@ -6,19 +6,17 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
 {
     public class ManageApi 
     {
-        private readonly string apiLocation;
-        private readonly string bearerToken;
+        private readonly ManageCoursesApiClient client;
 
         public ManageApi(string apiLocation, string bearerToken)
         {
-            this.apiLocation = apiLocation;
-            this.bearerToken = bearerToken;
+            client = new ManageCoursesApiClient(new ApiConf(bearerToken), new System.Net.Http.HttpClient());  
+            client.BaseUrl = apiLocation;
         }
+        
         public void PostPayload(UcasPayload payload)
         {
             Console.WriteLine("Posting to api...");
-            var client = new ManageCoursesApiClient(new ApiConf(bearerToken), new System.Net.Http.HttpClient());  
-            client.BaseUrl = apiLocation;          
             client.Data_ImportAsync(payload).Wait();
             Console.WriteLine("Done.");
         }
