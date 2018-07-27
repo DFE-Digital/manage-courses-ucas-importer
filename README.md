@@ -22,5 +22,5 @@ GTTR_NOTETEXT.xls
 ```
 dotnet restore
 dotnet build
-dotnet run --project src/importer/UcasCourseImporter.csproj --folder data --target <ManageCourses API URL> --key <ManageCourses API admin key>
+dotnet run --project src/importer/UcasCourseImporter.csproj --folder data --url <ManageCourses API URL> --key <ManageCourses API admin key>
 ```
