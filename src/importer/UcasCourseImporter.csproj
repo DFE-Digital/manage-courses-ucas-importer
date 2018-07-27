@@ -11,7 +11,7 @@
     <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="NSwag.MSBuild" Version="11.17.13" />
-    <PackageReference Include="GovUk.Education.ManageCourses.ApiClient" Version="0.2.0-split-import" />
+    <PackageReference Include="GovUk.Education.ManageCourses.ApiClient" Version="0.2.0" />
   </ItemGroup>
 
   <ItemGroup>
