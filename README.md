@@ -18,14 +18,11 @@ GTTR_INST.xls
 GTTR_INTAKE.xls
 GTTR_NOTETEXT.xls
 
-#From DTTP import script 
+#From DTTP import script, https://github.com/DFE-Digital/manage-courses-userlist 
 mc-organisations.csv
 mc-organisations_institutions.csv
 mc-organisations_users.csv
 mc-users.csv
-
-#From NCTL analytics team
-ProviderMapper.xls
 ```
 
 3. Run in the repository root
