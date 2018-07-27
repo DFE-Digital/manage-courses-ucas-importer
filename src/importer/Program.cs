@@ -20,16 +20,18 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
 
             if (!folderOption.HasValue()) {
                 Console.WriteLine("Missing --folder option");
-                return;
             }
 
             if (!urlOption.HasValue()) {
                 Console.WriteLine("Missing --url option");
-                return;
             }
 
             if (!apiKeyOption.HasValue()) {
-                Console.WriteLine("Missing --key option. Attempting import without key...");
+                Console.WriteLine("Missing --key option");
+            }
+
+            if (!folderOption.HasValue() || !urlOption.HasValue() || !apiKeyOption.HasValue()) {
+                return;
             }
 
             // only used to avoid importing orphaned campuses
@@ -54,8 +56,7 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
                 NoteTexts = new ObservableCollection<UcasNoteText>(noteTexts)
             };
             
-            var apiKey = apiKeyOption.HasValue() ? apiKeyOption.Value() : "";
-            new ManageApi(urlOption.Value(), apiKey).PostPayload(payload);
+            new ManageApi(urlOption.Value(), apiKeyOption.Value()).PostPayload(payload);
         }
     }
 }
