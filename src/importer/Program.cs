@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using GovUk.Education.ManageCourses.ApiClient;
 using GovUk.Education.ManageCourses.Xls;
 using Microsoft.Extensions.CommandLineUtils;
@@ -16,6 +17,20 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             
             app.HelpOption("-?|-h|--help");
             app.Execute(args);
+
+            if (!folderOption.HasValue()) {
+                Console.WriteLine("Missing --folder option");
+                return;
+            }
+
+            if (!apiOption.HasValue()) {
+                Console.WriteLine("Missing --url option");
+                return;
+            }
+
+            if (!apiKeyOption.HasValue()) {
+                Console.WriteLine("Missing --key option. Attempting import without key...");
+            }
 
             // only used to avoid importing orphaned campuses
             var institutions = new XlsReader().ReadInstitutions(folderOption.Value());
