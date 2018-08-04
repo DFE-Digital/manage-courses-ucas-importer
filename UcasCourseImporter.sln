@@ -4,8 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.27428.2037
 MinimumVisualStudioVersion = 10.0.40219.1
 
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiClient", "src\api-client\ApiClient.csproj", "{E4D080A7-5F38-47A0-82FC-CAF54FCEC10C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XlsReader", "src\xls-reader\XlsReader.csproj", "{E7C5BFC5-D62A-42A9-936A-5D64186010CB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvReader", "CsvReader\CsvReader.csproj", "{6F06D98E-6058-48BB-A8FA-490AB54E2D0F}"
