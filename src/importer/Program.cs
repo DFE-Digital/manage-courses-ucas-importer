@@ -31,6 +31,7 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             }
 
             if (!folderOption.HasValue() || !urlOption.HasValue() || !apiKeyOption.HasValue()) {
+                app.ShowHelp();
                 return;
             }
 
