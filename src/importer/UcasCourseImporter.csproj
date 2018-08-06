@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\CsvReader\CsvReader.csproj" />
-    <ProjectReference Include="..\api-client\ApiClient.csproj" />
     <ProjectReference Include="..\xls-reader\XlsReader.csproj" />
   </ItemGroup>
 
