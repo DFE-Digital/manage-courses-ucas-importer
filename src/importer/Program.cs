@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using GovUk.Education.ManageCourses.ApiClient;
 using GovUk.Education.ManageCourses.Xls;
 using Microsoft.Extensions.CommandLineUtils;
+using Microsoft.Extensions.Configuration;
 
 namespace GovUk.Education.ManageCourses.UcasCourseImporter
 {
@@ -10,42 +12,27 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
     {
         static void Main(string[] args)
         {
-            var app = new CommandLineApplication();
-            var folderOption = app.Option("-$|-f|--folder <folder>", "Folder to read UCAS .xls files from ", CommandOptionType.SingleValue);
-            var urlOption = app.Option("-u|--url|--api-url <url>", "URL of the ManageCourses API", CommandOptionType.SingleValue);
-            var apiKeyOption = app.Option("-k|--key|--api-key <key>", "Admin Key for the ManageCourses API", CommandOptionType.SingleValue);
-            
-            app.HelpOption("-?|-h|--help");
-            app.Execute(args);
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .AddEnvironmentVariables()
+                .AddUserSecrets<Program>()
+                .Build();                
 
-            if (!folderOption.HasValue()) {
-                Console.WriteLine("Missing --folder option");
-            }
-
-            if (!urlOption.HasValue()) {
-                Console.WriteLine("Missing --url option");
-            }
-
-            if (!apiKeyOption.HasValue()) {
-                Console.WriteLine("Missing --key option");
-            }
-
-            if (!folderOption.HasValue() || !urlOption.HasValue() || !apiKeyOption.HasValue()) {
+            var folder = config["folder"];
                 app.ShowHelp();
-                return;
-            }
 
             // only used to avoid importing orphaned campuses
             // i.e. we do not import institutions but need them to determine which campuses to import
-            var institutions = new XlsReader().ReadInstitutions(folderOption.Value());
+            var institutions = new XlsReader().ReadInstitutions(folder);
             
             // data to import
-            var campuses = new XlsReader().ReadCampuses(folderOption.Value(), institutions);
-            var courses = new XlsReader().ReadCourses(folderOption.Value(), campuses);
-            var subjects = new XlsReader().ReadSubjects(folderOption.Value());
-            var courseSubjects = new XlsReader().ReadCourseSubjects(folderOption.Value(), courses, subjects);
-            var courseNotes = new XlsReader().ReadCourseNotes(folderOption.Value());
-            var noteTexts = new XlsReader().ReadNoteText(folderOption.Value());
+            var campuses = new XlsReader().ReadCampuses(folder, institutions);
+            var courses = new XlsReader().ReadCourses(folder, campuses);
+            var subjects = new XlsReader().ReadSubjects(folder);
+            var courseSubjects = new XlsReader().ReadCourseSubjects(folder, courses, subjects);
+            var courseNotes = new XlsReader().ReadCourseNotes(folder);
+            var noteTexts = new XlsReader().ReadNoteText(folder);
 
             var payload = new UcasPayload
             {
@@ -57,7 +44,7 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
                 NoteTexts = new ObservableCollection<UcasNoteText>(noteTexts)
             };
             
-            new ManageApi(urlOption.Value(), apiKeyOption.Value()).PostPayload(payload);
+            new ManageApi(config["url"], config["apikey"]).PostPayload(payload);
         }
     }
 }
