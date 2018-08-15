@@ -15,7 +15,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="2.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="NSwag.MSBuild" Version="11.17.13" />
-    <PackageReference Include="GovUk.Education.ManageCourses.ApiClient" Version="0.2.0" />
+    <PackageReference Include="GovUk.Education.ManageCourses.ApiClient" Version="0.4.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CsvReader\CsvReader.csproj" />
@@ -32,6 +32,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="settings.job">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="webjob.bat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

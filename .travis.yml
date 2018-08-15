@@ -1,11 +1,14 @@
 language: csharp
 mono: none
 dotnet: 2.0.0
+env:
+  global:
+    secure: AtLoRorriXyQUTV2ACM9deRumj1mKp6SBf7fzrfVLhkbtlYWWqiq6iBMLP5m3YeG8uWHhc4z79Z8i86aqqEEMarOUxs29fNP39DGcFLywnWqL7e04PheKbAN7OMZ77MV9r7irhYnEvHJqsVNxnOhTjpUCJ/+0PqMgA6j+T8pobXdy2BJbUOO1XSdjwBMqcAkhLMSTVKcmlQVLOMQY5OOcICfTMvHIqFoDcwdr+tRr+inUNME0OjS+JW17IqWDRAf9DJYSvzqST4oukzrd1lvLIiU4zEt8b7tNAmLOQGS8hZvx/kjy8gLUS+3Fhee85zq2ztmSV//0QwrJhaLyjamUZTNjG5ONvfak4l5dUzDtTJYXmV18nwXIDALHEjBhtqttJTf68DGWJveAjhcvI2sThMexap7yBMWba6UjLGivpdVdbbloeoHT7PjcwueOYoYkeXlZ+wcNDwXaP1E7puP5r7I8O+wMqGvUgd1F+ZKySsI4X6FgPVa9ABqlkcNAJKONm3KK9w/1OcU8RK+PU1aGeLBc/c9P/LSuLkjzkU+djaMuFJ1Hbi9Jbfkwh4OyDuajvDelr7H76FU9ZAYCNM+rGyRj0AoIadf4mfo/WKxyIkeayj6+716M7QLY68jppv8W1Rc7yVhV5//DuFIjpDoO/mQ5FNJuT0Lpsfflypal/w=
 script:
- - dotnet restore
- - dotnet build
- - dotnet test ./ImporterTests/ImporterTests.csproj
+- dotnet restore
+- dotnet build
+- dotnet test ./ImporterTests/ImporterTests.csproj
 deploy:
 - provider: script
-  script: "./travis-deploy.sh" 
-  on: master
+  script: "./travis-deploy.sh govuk-dfe-bat-deployment-user:$AZURE_WA_PASSWORD"
+  on: azurify
