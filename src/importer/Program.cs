@@ -25,17 +25,22 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             var ucasZipDownloader = new UcasZipDownloader(config["azure_url"], config["azure_signature"]);
             var zipFile = ucasZipDownloader.DownloadLatestToFolder(folder).Result;
 
+            var extractor = new UcasZipExtractor();
+            var unzipFolder = Path.Combine(folder, "unzip");
+            extractor.Extract(zipFile, unzipFolder);
+
+
             // only used to avoid importing orphaned campuses
             // i.e. we do not import institutions but need them to determine which campuses to import
-            var institutions = new XlsReader().ReadInstitutions(folder);
+            var institutions = new XlsReader().ReadInstitutions(unzipFolder);
 
             // data to import
-            var campuses = new XlsReader().ReadCampuses(folder, institutions);
-            var courses = new XlsReader().ReadCourses(folder, campuses);
-            var subjects = new XlsReader().ReadSubjects(folder);
-            var courseSubjects = new XlsReader().ReadCourseSubjects(folder, courses, subjects);
-            var courseNotes = new XlsReader().ReadCourseNotes(folder);
-            var noteTexts = new XlsReader().ReadNoteText(folder);
+            var campuses = new XlsReader().ReadCampuses(unzipFolder, institutions);
+            var courses = new XlsReader().ReadCourses(unzipFolder, campuses);
+            var subjects = new XlsReader().ReadSubjects(unzipFolder);
+            var courseSubjects = new XlsReader().ReadCourseSubjects(unzipFolder, courses, subjects);
+            var courseNotes = new XlsReader().ReadCourseNotes(unzipFolder);
+            var noteTexts = new XlsReader().ReadNoteText(unzipFolder);
 
             var payload = new UcasPayload
             {
