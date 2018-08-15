@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>  
-    <PackageReference Include="GovUk.Education.ManageCourses.ApiClient" Version="0.2.0" />
+    <PackageReference Include="GovUk.Education.ManageCourses.ApiClient" Version="0.4.1" />
   </ItemGroup>
 
 </Project>
