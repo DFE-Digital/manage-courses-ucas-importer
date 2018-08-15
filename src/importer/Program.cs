@@ -30,14 +30,14 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             extractor.Extract(zipFile, unzipFolder);
 
 
-            // only used to avoid importing orphaned campuses
+            // only used to avoid importing orphaned data
             // i.e. we do not import institutions but need them to determine which campuses to import
             var institutions = new XlsReader().ReadInstitutions(unzipFolder);
+            var subjects = new XlsReader().ReadSubjects(unzipFolder);
 
             // data to import
             var campuses = new XlsReader().ReadCampuses(unzipFolder, institutions);
             var courses = new XlsReader().ReadCourses(unzipFolder, campuses);
-            var subjects = new XlsReader().ReadSubjects(unzipFolder);
             var courseSubjects = new XlsReader().ReadCourseSubjects(unzipFolder, courses, subjects);
             var courseNotes = new XlsReader().ReadCourseNotes(unzipFolder);
             var noteTexts = new XlsReader().ReadNoteText(unzipFolder);
@@ -46,7 +46,6 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             {
                 Courses = new ObservableCollection<UcasCourse>(courses),
                 CourseSubjects = new ObservableCollection<UcasCourseSubject>(courseSubjects),
-                Subjects = new ObservableCollection<UcasSubject>(subjects),
                 Campuses = new ObservableCollection<UcasCampus>(campuses),
                 CourseNotes = new ObservableCollection<UcasCourseNote>(courseNotes),
                 NoteTexts = new ObservableCollection<UcasNoteText>(noteTexts)
