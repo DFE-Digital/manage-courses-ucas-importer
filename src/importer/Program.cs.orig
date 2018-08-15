@@ -19,11 +19,15 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
                 .AddUserSecrets<Program>()
                 .Build();              
 
-            var folder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());        
-            Directory.CreateDirectory(folder);    
+<<<<<<< 692464682deb1be99b8fa1f235566f2246242aa9
+            var folder = config["folder"];
+                app.ShowHelp();
+=======
+            var folder = config["folder"];            
 
-            var ucasZipDownloader = new UcasZipDownloader(config["azure_url"], config["azure_signature"]);
-            var zipFile = ucasZipDownloader.DownloadLatestToFolder(folder).Result; 
+            var ucasZipDownloader = new UcasZipDownloader();
+            ucasZipDownloader.DownloadLatestToFolder(folder); 
+>>>>>>> stub ucaszipdownloader
 
             // only used to avoid importing orphaned campuses
             // i.e. we do not import institutions but need them to determine which campuses to import

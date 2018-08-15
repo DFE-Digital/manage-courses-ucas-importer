@@ -21,4 +21,7 @@
     <ProjectReference Include="..\..\CsvReader\CsvReader.csproj" />
     <ProjectReference Include="..\xls-reader\XlsReader.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.0" />
+  </ItemGroup>
 </Project>
