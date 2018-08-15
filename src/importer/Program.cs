@@ -51,7 +51,7 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
                 NoteTexts = new ObservableCollection<UcasNoteText>(noteTexts)
             };
 
-            new ManageApi(config["url"], config["apikey"]).PostPayload(payload);
+            new ManageApi(config["manage_api_url"], config["manage_api_key"]).PostPayload(payload);
         }
     }
 }
