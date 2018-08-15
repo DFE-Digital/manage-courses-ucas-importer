@@ -17,18 +17,18 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
                 .AddJsonFile("appsettings.json")
                 .AddEnvironmentVariables()
                 .AddUserSecrets<Program>()
-                .Build();              
+                .Build();
 
-            var folder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());        
-            Directory.CreateDirectory(folder);    
+            var folder = Path.Combine(Path.GetTempPath(), "ucasfiles", Guid.NewGuid().ToString());
+            Directory.CreateDirectory(folder);
 
             var ucasZipDownloader = new UcasZipDownloader(config["azure_url"], config["azure_signature"]);
-            var zipFile = ucasZipDownloader.DownloadLatestToFolder(folder).Result; 
+            var zipFile = ucasZipDownloader.DownloadLatestToFolder(folder).Result;
 
             // only used to avoid importing orphaned campuses
             // i.e. we do not import institutions but need them to determine which campuses to import
             var institutions = new XlsReader().ReadInstitutions(folder);
-            
+
             // data to import
             var campuses = new XlsReader().ReadCampuses(folder, institutions);
             var courses = new XlsReader().ReadCourses(folder, campuses);
@@ -46,7 +46,7 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
                 CourseNotes = new ObservableCollection<UcasCourseNote>(courseNotes),
                 NoteTexts = new ObservableCollection<UcasNoteText>(noteTexts)
             };
-            
+
             new ManageApi(config["url"], config["apikey"]).PostPayload(payload);
         }
     }
