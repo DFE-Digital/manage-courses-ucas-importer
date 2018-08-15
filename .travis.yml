@@ -5,3 +5,7 @@ script:
  - dotnet restore
  - dotnet build
  - dotnet test ./ImporterTests/ImporterTests.csproj
+deploy:
+- provider: script
+  script: "./travis-deploy.sh" 
+  on: master
