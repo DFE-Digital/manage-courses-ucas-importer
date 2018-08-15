@@ -17,10 +17,12 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
                 .AddJsonFile("appsettings.json")
                 .AddEnvironmentVariables()
                 .AddUserSecrets<Program>()
-                .Build();                
+                .Build();              
 
-            var folder = config["folder"];
-                app.ShowHelp();
+            var folder = config["folder"];            
+
+            var ucasZipDownloader = new UcasZipDownloader();
+            ucasZipDownloader.DownloadLatestToFolder(folder); 
 
             // only used to avoid importing orphaned campuses
             // i.e. we do not import institutions but need them to determine which campuses to import
