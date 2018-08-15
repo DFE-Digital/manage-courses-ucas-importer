@@ -1,6 +1,6 @@
-
 #Ignore thumbnails created by Windows
 Thumbs.db
+
 #Ignore files built by Visual Studio
 *.obj
 *.exe
@@ -28,20 +28,6 @@ obj/
 _ReSharper*/
 [Tt]est[Rr]esult*
 .vs/
+
 #Nuget packages folder
 packages/
-
-#reference data we don't want in VC
-data/GTTR_CAMPUS.xls
-data/GTTR_CRSE_SUBJECT.xls
-data/GTTR_CRSE.xls
-data/GTTR_CRSENOTE.xls
-data/GTTR_INST.xls
-data/GTTR_INTAKE.xls
-data/GTTR_NOTETEXT.xls
-data/mc-organisations.csv
-data/mc-organisations_institutions.csv
-data/mc-organisations_users.csv
-data/mc-users.csv
-data/ProviderMapper.xls
-src/api-client/manage-courses-api-swagger.json
