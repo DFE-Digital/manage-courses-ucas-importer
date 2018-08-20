@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using GovUk.Education.ManageCourses.ApiClient;
 using GovUk.Education.ManageCourses.Xls;
 using Microsoft.Extensions.CommandLineUtils;
+using Microsoft.Extensions.Configuration;
 
 namespace GovUk.Education.ManageCourses.UcasCourseImporter
 {
@@ -10,54 +12,47 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
     {
         static void Main(string[] args)
         {
-            var app = new CommandLineApplication();
-            var folderOption = app.Option("-$|-f|--folder <folder>", "Folder to read UCAS .xls files from ", CommandOptionType.SingleValue);
-            var urlOption = app.Option("-u|--url|--api-url <url>", "URL of the ManageCourses API", CommandOptionType.SingleValue);
-            var apiKeyOption = app.Option("-k|--key|--api-key <key>", "Admin Key for the ManageCourses API", CommandOptionType.SingleValue);
-            
-            app.HelpOption("-?|-h|--help");
-            app.Execute(args);
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .AddEnvironmentVariables()
+                .AddUserSecrets<Program>()
+                .Build();
 
-            if (!folderOption.HasValue()) {
-                Console.WriteLine("Missing --folder option");
-            }
+            var folder = Path.Combine(Path.GetTempPath(), "ucasfiles", Guid.NewGuid().ToString());
+            Directory.CreateDirectory(folder);
 
-            if (!urlOption.HasValue()) {
-                Console.WriteLine("Missing --url option");
-            }
+            var ucasZipDownloader = new UcasZipDownloader(config["azure_url"], config["azure_signature"]);
+            var zipFile = ucasZipDownloader.DownloadLatestToFolder(folder).Result;
 
-            if (!apiKeyOption.HasValue()) {
-                Console.WriteLine("Missing --key option");
-            }
+            var extractor = new UcasZipExtractor();
+            var unzipFolder = Path.Combine(folder, "unzip");
+            extractor.Extract(zipFile, unzipFolder);
 
-            if (!folderOption.HasValue() || !urlOption.HasValue() || !apiKeyOption.HasValue()) {
-                app.ShowHelp();
-                return;
-            }
 
-            // only used to avoid importing orphaned campuses
+            // only used to avoid importing orphaned data
             // i.e. we do not import institutions but need them to determine which campuses to import
-            var institutions = new XlsReader().ReadInstitutions(folderOption.Value());
-            
+            var subjects = new XlsReader().ReadSubjects("data");
+
             // data to import
-            var campuses = new XlsReader().ReadCampuses(folderOption.Value(), institutions);
-            var courses = new XlsReader().ReadCourses(folderOption.Value(), campuses);
-            var subjects = new XlsReader().ReadSubjects(folderOption.Value());
-            var courseSubjects = new XlsReader().ReadCourseSubjects(folderOption.Value(), courses, subjects);
-            var courseNotes = new XlsReader().ReadCourseNotes(folderOption.Value());
-            var noteTexts = new XlsReader().ReadNoteText(folderOption.Value());
+            var institutions = new XlsReader().ReadInstitutions(unzipFolder);
+            var campuses = new XlsReader().ReadCampuses(unzipFolder, institutions);
+            var courses = new XlsReader().ReadCourses(unzipFolder, campuses);
+            var courseSubjects = new XlsReader().ReadCourseSubjects(unzipFolder, courses, subjects);
+            var courseNotes = new XlsReader().ReadCourseNotes(unzipFolder);
+            var noteTexts = new XlsReader().ReadNoteText(unzipFolder);
 
             var payload = new UcasPayload
-            {
+            {                
+                Institutions = new ObservableCollection<UcasInstitution>(institutions),
                 Courses = new ObservableCollection<UcasCourse>(courses),
                 CourseSubjects = new ObservableCollection<UcasCourseSubject>(courseSubjects),
-                Subjects = new ObservableCollection<UcasSubject>(subjects),
                 Campuses = new ObservableCollection<UcasCampus>(campuses),
                 CourseNotes = new ObservableCollection<UcasCourseNote>(courseNotes),
                 NoteTexts = new ObservableCollection<UcasNoteText>(noteTexts)
             };
-            
-            new ManageApi(urlOption.Value(), apiKeyOption.Value()).PostPayload(payload);
+
+            new ManageApi(config["manage_api_url"], config["manage_api_key"]).PostPayload(payload);
         }
     }
 }
