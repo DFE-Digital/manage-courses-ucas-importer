@@ -10,7 +10,11 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
 
         public ManageApi(string apiLocation, string bearerToken)
         {
-            client = new ManageCoursesApiClient(new ApiConf(bearerToken), new System.Net.Http.HttpClient());  
+            var patientHttpClient = new System.Net.Http.HttpClient() {
+                Timeout = TimeSpan.FromMinutes(240)
+            };
+
+            client = new ManageCoursesApiClient(new ApiConf(bearerToken), patientHttpClient);  
             client.BaseUrl = apiLocation;
         }
         

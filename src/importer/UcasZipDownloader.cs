@@ -31,17 +31,28 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             var list = XElement.Parse(await listResponse.Content.ReadAsStringAsync());
 
             var filenames = new List<AzureFile>();
+            var fileNameRegex = new Regex("^NetupdateExtract_([0-9]{2})([0-9]{2})([0-9]{4})_([0-9]{2})([0-9]{2})\\.zip$");
+            
             foreach(var blobElement in list.Element("Blobs").Elements())
             {
-                filenames.Add(new AzureFile(
-                    name: blobElement.Element("Name").Value,
-                    timestamp: DateTime.Parse(blobElement.Element("Properties").Element("Creation-Time").Value)
-                ));
+                string name = blobElement.Element("Name").Value;
+                var match = fileNameRegex.Match(name);
+                if (match.Success) 
+                {
+                    var timestamp = new DateTime(
+                        int.Parse(match.Groups[3].Value),
+                        int.Parse(match.Groups[2].Value),
+                        int.Parse(match.Groups[1].Value),
+                        int.Parse(match.Groups[4].Value),
+                        int.Parse(match.Groups[5].Value),
+                        0);
+                    
+                    filenames.Add(new AzureFile(name, timestamp));
+                }
             }
 
             // determine best file
-            var fileNameRegex = new Regex("^NetupdateExtract_[0-9_]+\\.zip$");
-            var bestFileName = filenames.Where(x => fileNameRegex.IsMatch(x.Name)).OrderByDescending(x => x.Timestamp).FirstOrDefault();
+            var bestFileName = filenames.OrderByDescending(x => x.Timestamp).FirstOrDefault();
 
             if (bestFileName != null) 
             {
