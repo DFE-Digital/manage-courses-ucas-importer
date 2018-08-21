@@ -10,7 +10,7 @@
   </ItemGroup>  
 
   <ItemGroup>  
-    <PackageReference Include="GovUk.Education.ManageCourses.ApiClient" Version="0.5.0-importer-updates-institution" />
+    <PackageReference Include="GovUk.Education.ManageCourses.ApiClient" Version="0.5.0" />
   </ItemGroup>
   
 </Project>
