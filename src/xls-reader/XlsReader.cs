@@ -1,18 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using GovUk.Education.ManageCourses.ApiClient;
 using NPOI.HSSF.UserModel;
+using Serilog;
 
 namespace GovUk.Education.ManageCourses.Xls
 {
     public class XlsReader
     {
+        private readonly ILogger _logger;
+
+        public XlsReader(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         public List<UcasCourse> ReadCourses(string folder, IList<UcasCampus> campuses)
         {
             var file = new FileInfo(Path.Combine(folder, "GTTR_CRSE.xls"));
-            Console.WriteLine("Reading course xls file from: " + file.FullName);
+            _logger.Information("Reading course xls file from: " + file.FullName);
 
             var courses = new List<UcasCourse>();
             using (var stream = new FileStream(file.FullName, FileMode.Open))
@@ -46,19 +53,19 @@ namespace GovUk.Education.ManageCourses.Xls
                     };
                     if (!campuses.Any(c => c.InstCode == ucasCourse.InstCode && c.CampusCode == ucasCourse.CampusCode))
                     {
-                        Console.Out.WriteLine($"  UcasCourse skipped - invalid campus '{ucasCourse.CampusCode}' inst_code/crse_code: {ucasCourse.InstCode}, {ucasCourse.CrseCode}");
+                        _logger.Information($"  UcasCourse skipped - invalid campus '{ucasCourse.CampusCode}' inst_code/crse_code: {ucasCourse.InstCode}, {ucasCourse.CrseCode}");
                         continue;
                     }
                     courses.Add(ucasCourse);
                 }
             }
-            Console.Out.WriteLine(courses.Count + " courses loaded from xls");
+            _logger.Information(courses.Count + " courses loaded from xls");
             return courses;
         }
         public List<UcasInstitution> ReadInstitutions(string folder)
         {
             var file = new FileInfo(Path.Combine(folder, "GTTR_INST.xls"));
-            Console.WriteLine("Reading institution xls file from: " + file.FullName);
+            _logger.Information("Reading institution xls file from: " + file.FullName);
 
             var institutions = new List<UcasInstitution>();
             using (var stream = new FileStream(file.FullName, FileMode.Open))
@@ -98,14 +105,14 @@ namespace GovUk.Education.ManageCourses.Xls
                     );
                 }
             }
-            Console.Out.WriteLine(institutions.Count + " intitutions loaded from xls");
+            _logger.Information(institutions.Count + " intitutions loaded from xls");
             return institutions;
         }
 
         public List<UcasCourseSubject> ReadCourseSubjects(string folder, IList<UcasCourse> courses, IList<UcasSubject> subjects)
         {
             var file = new FileInfo(Path.Combine(folder, "GTTR_CRSE_SUBJECT.xls"));
-            Console.WriteLine("Reading course subject xls file from: " + file.FullName);
+            _logger.Information("Reading course subject xls file from: " + file.FullName);
 
             var courseSubjects = new List<UcasCourseSubject>();
             int skipCount = 0;
@@ -134,27 +141,27 @@ namespace GovUk.Education.ManageCourses.Xls
                     if (!courses.Any(c => c.InstCode == ucasCourseSubject.InstCode && c.CrseCode == ucasCourseSubject.CrseCode))
                     {
                         skipCount++;
-                        Console.Out.WriteLine($"  UcasCourseSubject skipped - invalid inst_code/crse_code combination: {ucasCourseSubject.InstCode}, {ucasCourseSubject.CrseCode}");
+                        _logger.Information($"  UcasCourseSubject skipped - invalid inst_code/crse_code combination: {ucasCourseSubject.InstCode}, {ucasCourseSubject.CrseCode}");
                         continue;
                     }
                     if (!subjects.Any(c => c.SubjectCode == ucasCourseSubject.SubjectCode))
                     {
                         skipCount++;
-                        Console.Out.WriteLine($"  UcasCourseSubject skipped - invalid subject code: {ucasCourseSubject.SubjectCode} - inst/crse: {ucasCourseSubject.InstCode}, {ucasCourseSubject.CrseCode}");
+                        _logger.Information($"  UcasCourseSubject skipped - invalid subject code: {ucasCourseSubject.SubjectCode} - inst/crse: {ucasCourseSubject.InstCode}, {ucasCourseSubject.CrseCode}");
                         continue;
                     }
                     courseSubjects.Add(ucasCourseSubject
                     );
                 }
             }
-            Console.Out.WriteLine(courseSubjects.Count + " course-subjects loaded from xls");
-            Console.Out.WriteLine($"  {skipCount} course-subjects rows skipped due to integrity violations");
+            _logger.Information(courseSubjects.Count + " course-subjects loaded from xls");
+            _logger.Information($"  {skipCount} course-subjects rows skipped due to integrity violations");
             return courseSubjects;
         }
         public List<UcasSubject> ReadSubjects(string folder)
         {
             var file = new FileInfo(Path.Combine(folder, "GTTR_SUBJECT.xls"));
-            Console.WriteLine("Reading subject xls file from: " + file.FullName);
+            _logger.Information("Reading subject xls file from: " + file.FullName);
 
             var subjects = new List<UcasSubject>();
             using (var stream = new FileStream(file.FullName, FileMode.Open))
@@ -181,13 +188,13 @@ namespace GovUk.Education.ManageCourses.Xls
                     );
                 }
             }
-            Console.Out.WriteLine(subjects.Count + " subjects loaded from xls");
+            _logger.Information(subjects.Count + " subjects loaded from xls");
             return subjects;
         }
         public List<UcasCampus> ReadCampuses(string folder, IList<UcasInstitution> institutions)
         {
             var file = new FileInfo(Path.Combine(folder, "GTTR_CAMPUS.xls"));
-            Console.WriteLine("Reading campus xls file from: " + file.FullName);
+            _logger.Information("Reading campus xls file from: " + file.FullName);
 
             var campuses = new List<UcasCampus>();
             using (var stream = new FileStream(file.FullName, FileMode.Open))
@@ -221,19 +228,19 @@ namespace GovUk.Education.ManageCourses.Xls
                     };
                     if (!institutions.Any(i => i.InstCode == ucasCampus.InstCode))
                     {
-                        Console.Out.WriteLine($"  Campus '{ucasCampus.CampusCode}' skipped - invalid inst_code {ucasCampus.InstCode}");
+                        _logger.Information($"  Campus '{ucasCampus.CampusCode}' skipped - invalid inst_code {ucasCampus.InstCode}");
                         continue;
                     }
                     campuses.Add(ucasCampus);
                 }
             }
-            Console.Out.WriteLine(campuses.Count + " campuses loaded from xls");
+            _logger.Information(campuses.Count + " campuses loaded from xls");
             return campuses;
         }
         public List<UcasCourseNote> ReadCourseNotes(string folder)
         {
             var file = new FileInfo(Path.Combine(folder, "GTTR_CRSENOTE.xls"));
-            Console.WriteLine("Reading course note xls file from: " + file.FullName);
+            _logger.Information("Reading course note xls file from: " + file.FullName);
 
             var courseNotes = new List<UcasCourseNote>();
             using (var stream = new FileStream(file.FullName, FileMode.Open))
@@ -262,13 +269,13 @@ namespace GovUk.Education.ManageCourses.Xls
                     );
                 }
             }
-            Console.Out.WriteLine(courseNotes.Count + " course notes loaded from xls");
+            _logger.Information(courseNotes.Count + " course notes loaded from xls");
             return courseNotes;
         }
         public List<UcasNoteText> ReadNoteText(string folder)
         {
             var file = new FileInfo(Path.Combine(folder, "GTTR_NOTETEXT.xls"));
-            Console.WriteLine("Reading note text xls file from: " + file.FullName);
+            _logger.Information("Reading note text xls file from: " + file.FullName);
 
             var noteTexts = new List<UcasNoteText>();
             using (var stream = new FileStream(file.FullName, FileMode.Open))
@@ -297,7 +304,7 @@ namespace GovUk.Education.ManageCourses.Xls
                     );
                 }
             }
-            Console.Out.WriteLine(noteTexts.Count + " note texts loaded from xls");
+            _logger.Information(noteTexts.Count + " note texts loaded from xls");
             return noteTexts;
         }
     }
