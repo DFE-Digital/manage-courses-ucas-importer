@@ -78,8 +78,13 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
 
             public AzureFile(string name, DateTime timestamp)
             {
-                this.Name = name;
-                this.Timestamp = timestamp;
+                Name = name;
+                Timestamp = timestamp;
+            }
+
+            public override string ToString()
+            {
+                return $"Azure file {Name} with timestamp {Timestamp}";
             }
         }
     }
