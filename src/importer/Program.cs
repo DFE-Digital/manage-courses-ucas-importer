@@ -21,15 +21,16 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
                 .CreateLogger();
 
             var folder = Path.Combine(Path.GetTempPath(), "ucasfiles", Guid.NewGuid().ToString());
+            logger.Information($"Using folder {folder}");
             Directory.CreateDirectory(folder);
 
-            var ucasZipDownloader = new UcasZipDownloader(configuration["azure_url"], configuration["azure_signature"]);
+            var ucasZipDownloader = new UcasZipDownloader(logger, configuration["azure_url"], configuration["azure_signature"]);
             var zipFile = ucasZipDownloader.DownloadLatestToFolder(folder).Result;
 
-            var extractor = new UcasZipExtractor();
             var unzipFolder = Path.Combine(folder, "unzip");
+            logger.Information($"Unzipping {zipFile} to {unzipFolder}");
+            var extractor = new UcasZipExtractor();
             extractor.Extract(zipFile, unzipFolder);
-
 
             var xlsReader = new XlsReader(logger);
 
