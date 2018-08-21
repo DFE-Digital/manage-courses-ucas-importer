@@ -32,7 +32,6 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             var listUrl = $"{_blobContainerUrl}?restype=container&comp=list&{_sharedAccessSignatureQueryString}";
             _logger.Debug($"Getting {listUrl}");
             var listResponse = await _client.GetAsync(listUrl);
-            _logger.Debug($"Response: {listResponse.Content}");
             var list = XElement.Parse(await listResponse.Content.ReadAsStringAsync());
 
             var filenames = new List<AzureFile>();
