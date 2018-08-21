@@ -53,7 +53,7 @@ namespace GovUk.Education.ManageCourses.Xls
                     };
                     if (!campuses.Any(c => c.InstCode == ucasCourse.InstCode && c.CampusCode == ucasCourse.CampusCode))
                     {
-                        _logger.Information($"  UcasCourse skipped - invalid campus '{ucasCourse.CampusCode}' inst_code/crse_code: {ucasCourse.InstCode}, {ucasCourse.CrseCode}");
+                        _logger.Warning($"  UcasCourse skipped - invalid campus '{ucasCourse.CampusCode}' inst_code/crse_code: {ucasCourse.InstCode}, {ucasCourse.CrseCode}");
                         continue;
                     }
                     courses.Add(ucasCourse);
@@ -141,13 +141,13 @@ namespace GovUk.Education.ManageCourses.Xls
                     if (!courses.Any(c => c.InstCode == ucasCourseSubject.InstCode && c.CrseCode == ucasCourseSubject.CrseCode))
                     {
                         skipCount++;
-                        _logger.Information($"  UcasCourseSubject skipped - invalid inst_code/crse_code combination: {ucasCourseSubject.InstCode}, {ucasCourseSubject.CrseCode}");
+                        _logger.Warning($"  UcasCourseSubject skipped - invalid inst_code/crse_code combination: {ucasCourseSubject.InstCode}, {ucasCourseSubject.CrseCode}");
                         continue;
                     }
                     if (!subjects.Any(c => c.SubjectCode == ucasCourseSubject.SubjectCode))
                     {
                         skipCount++;
-                        _logger.Information($"  UcasCourseSubject skipped - invalid subject code: {ucasCourseSubject.SubjectCode} - inst/crse: {ucasCourseSubject.InstCode}, {ucasCourseSubject.CrseCode}");
+                        _logger.Warning($"  UcasCourseSubject skipped - invalid subject code: {ucasCourseSubject.SubjectCode} - inst/crse: {ucasCourseSubject.InstCode}, {ucasCourseSubject.CrseCode}");
                         continue;
                     }
                     courseSubjects.Add(ucasCourseSubject
@@ -155,7 +155,7 @@ namespace GovUk.Education.ManageCourses.Xls
                 }
             }
             _logger.Information(courseSubjects.Count + " course-subjects loaded from xls");
-            _logger.Information($"  {skipCount} course-subjects rows skipped due to integrity violations");
+            _logger.Warning($"  {skipCount} course-subjects rows skipped due to integrity violations");
             return courseSubjects;
         }
         public List<UcasSubject> ReadSubjects(string folder)
@@ -228,7 +228,7 @@ namespace GovUk.Education.ManageCourses.Xls
                     };
                     if (!institutions.Any(i => i.InstCode == ucasCampus.InstCode))
                     {
-                        _logger.Information($"  Campus '{ucasCampus.CampusCode}' skipped - invalid inst_code {ucasCampus.InstCode}");
+                        _logger.Warning($"  Campus '{ucasCampus.CampusCode}' skipped - invalid inst_code {ucasCampus.InstCode}");
                         continue;
                     }
                     campuses.Add(ucasCampus);
