@@ -20,6 +20,8 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
                 .ApplicationInsightsTraces(configuration["APPINSIGHTS_INSTRUMENTATIONKEY"])
                 .CreateLogger();
 
+            logger.Information("UcasCourseImporter started.");
+
             var folder = Path.Combine(Path.GetTempPath(), "ucasfiles", Guid.NewGuid().ToString());
             logger.Information($"Using folder {folder}");
             Directory.CreateDirectory(folder);
@@ -58,6 +60,8 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
 
             var manageApi = new ManageApi(logger, configuration["manage_api_url"], configuration["manage_api_key"]);
             manageApi.PostPayload(payload);
+
+            logger.Information("UcasCourseImporter finished.");
         }
 
         private static IConfiguration GetConfiguration()
