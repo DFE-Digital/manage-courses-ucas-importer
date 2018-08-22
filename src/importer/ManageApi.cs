@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using GovUk.Education.ManageCourses.ApiClient;
 using Serilog;
@@ -12,7 +13,13 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
         public ManageApi(ILogger logger, string apiLocation, string bearerToken)
         {
             _logger = logger;
-            _client = new ManageCoursesApiClient(new ApiConf(bearerToken), new System.Net.Http.HttpClient())
+
+            var patientHttpClient = new System.Net.Http.HttpClient()
+            {
+                Timeout = TimeSpan.FromMinutes(240)
+            };
+
+            _client = new ManageCoursesApiClient(new ApiConf(bearerToken), patientHttpClient)
             {
                 BaseUrl = apiLocation
             };

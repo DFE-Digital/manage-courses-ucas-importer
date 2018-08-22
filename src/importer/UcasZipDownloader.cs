@@ -35,17 +35,28 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             var list = XElement.Parse(await listResponse.Content.ReadAsStringAsync());
 
             var filenames = new List<AzureFile>();
+            const string fileNameRegexString = "^NetupdateExtract_([0-9]{2})([0-9]{2})([0-9]{4})_([0-9]{2})([0-9]{2})\\.zip$";
+            var fileNameRegex = new Regex(fileNameRegexString);
+            
             foreach (var blobElement in list.Element("Blobs").Elements())
             {
-                var name = blobElement.Element("Name")?.Value;
-                var timestamp = blobElement.Element("Properties")?.Element("Creation-Time")?.Value;
-                _logger.Debug($"Parsed blob: Name - '{name}', timestamp - {timestamp}");
-                filenames.Add(new AzureFile(name, DateTime.Parse(timestamp)));
+                string name = blobElement.Element("Name").Value;
+                var match = fileNameRegex.Match(name);
+                if (match.Success) 
+                {
+                    var timestamp = new DateTime(
+                        int.Parse(match.Groups[3].Value),
+                        int.Parse(match.Groups[2].Value),
+                        int.Parse(match.Groups[1].Value),
+                        int.Parse(match.Groups[4].Value),
+                        int.Parse(match.Groups[5].Value),
+                        0);
+                    
+                    filenames.Add(new AzureFile(name, timestamp));
+                }
             }
 
             // determine best file
-            const string fileNameRegexString = "^NetupdateExtract_[0-9_]+\\.zip$";
-            var fileNameRegex = new Regex(fileNameRegexString);
             var matchingFiles = filenames.Where(x => fileNameRegex.IsMatch(x.Name)).ToList();
             _logger.Information($"Found {matchingFiles.Count()} blobs matching '{fileNameRegex}' in azure blob storage");
             var bestFileName = matchingFiles.OrderByDescending(x => x.Timestamp).FirstOrDefault();
