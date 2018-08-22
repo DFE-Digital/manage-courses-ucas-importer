@@ -6,34 +6,39 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Serilog;
 
 namespace GovUk.Education.ManageCourses.UcasCourseImporter
 {
     internal class UcasZipDownloader
     {
         private readonly HttpClient _client;
+        private readonly ILogger _logger;
         private readonly string _blobContainerUrl;
         private readonly string _sharedAccessSignatureQueryString;
-        
-        public UcasZipDownloader(string blobContainerUrl, string sharedAccessSignature)
+
+        public UcasZipDownloader(ILogger logger, string blobContainerUrl, string sharedAccessSignature)
         {
             _client = new HttpClient();
+            _logger = logger;
             _blobContainerUrl = blobContainerUrl;
             _sharedAccessSignatureQueryString = sharedAccessSignature;
         }
 
         public async Task<string> DownloadLatestToFolder(string folder)
         {
-            string fileToWriteTo = Path.Combine(folder, "ucas-data.zip");
-                    
+
             // list files
-            var listResponse = await _client.GetAsync($"{_blobContainerUrl}?restype=container&comp=list&{_sharedAccessSignatureQueryString}");
+            var listUrl = $"{_blobContainerUrl}?restype=container&comp=list&{_sharedAccessSignatureQueryString}";
+            _logger.Debug($"Getting {listUrl}");
+            var listResponse = await _client.GetAsync(listUrl);
             var list = XElement.Parse(await listResponse.Content.ReadAsStringAsync());
 
             var filenames = new List<AzureFile>();
-            var fileNameRegex = new Regex("^NetupdateExtract_([0-9]{2})([0-9]{2})([0-9]{4})_([0-9]{2})([0-9]{2})\\.zip$");
+            const string fileNameRegexString = "^NetupdateExtract_([0-9]{2})([0-9]{2})([0-9]{4})_([0-9]{2})([0-9]{2})\\.zip$";
+            var fileNameRegex = new Regex(fileNameRegexString);
             
-            foreach(var blobElement in list.Element("Blobs").Elements())
+            foreach (var blobElement in list.Element("Blobs").Elements())
             {
                 string name = blobElement.Element("Name").Value;
                 var match = fileNameRegex.Match(name);
@@ -52,27 +57,28 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             }
 
             // determine best file
-            var bestFileName = filenames.OrderByDescending(x => x.Timestamp).FirstOrDefault();
+            var matchingFiles = filenames.Where(x => fileNameRegex.IsMatch(x.Name)).ToList();
+            _logger.Information($"Found {matchingFiles.Count()} blobs matching '{fileNameRegex}' in azure blob storage");
+            var bestFileName = matchingFiles.OrderByDescending(x => x.Timestamp).FirstOrDefault();
 
-            if (bestFileName != null) 
+            if (bestFileName == null)
             {
-                // download best file
-                using (HttpResponseMessage response = await _client.GetAsync($"{_blobContainerUrl}/{bestFileName.Name}?{_sharedAccessSignatureQueryString}"))
-                using (Stream streamToReadFrom = await response.Content.ReadAsStreamAsync())
-                {
-                    using (Stream streamToWriteTo = File.Open(fileToWriteTo, FileMode.Create))
-                    {
-                        await streamToReadFrom.CopyToAsync(streamToWriteTo);
-                    }
+                throw new Exception($"Couldn't find any files matching regex '{fileNameRegexString}'");
+            }
 
-                    response.Content = null;
-                }
-                return fileToWriteTo;
-            }
-            else 
+            // download best file
+            string fileToWriteTo = Path.Combine(folder, "ucas-data.zip");
+
+            _logger.Information($"Downloading {bestFileName} to {fileToWriteTo}");
+
+            using (var response = await _client.GetAsync($"{_blobContainerUrl}/{bestFileName.Name}?{_sharedAccessSignatureQueryString}"))
+            using (var streamToReadFrom = await response.Content.ReadAsStreamAsync())
+            using (Stream streamToWriteTo = File.Open(fileToWriteTo, FileMode.Create))
             {
-                return null;
+                await streamToReadFrom.CopyToAsync(streamToWriteTo);
             }
+            _logger.Verbose($"Downloading of {bestFileName} to {fileToWriteTo} complete");
+            return fileToWriteTo;
         }
 
         private class AzureFile
@@ -82,8 +88,13 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
 
             public AzureFile(string name, DateTime timestamp)
             {
-                this.Name = name;
-                this.Timestamp = timestamp;
+                Name = name;
+                Timestamp = timestamp;
+            }
+
+            public override string ToString()
+            {
+                return $"Azure file {Name} with timestamp {Timestamp}";
             }
         }
     }

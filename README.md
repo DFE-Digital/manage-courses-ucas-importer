@@ -24,3 +24,27 @@ dotnet restore
 dotnet build
 dotnet run --project src/importer/UcasCourseImporter.csproj --folder data --url <ManageCourses API URL> --key <ManageCourses API admin key>
 ```
+
+## Logging
+
+Logging is configured in `appsettings.json`, and values in there can be overridden with environment variables.
+
+Powershell:
+
+    $env:Serilog:MinimumLevel="Debug"
+    dotnet run
+
+Command prompt
+
+    set Serilog:MinimumLevel=Debug
+    dotnet run
+
+For more information see:
+
+* https://github.com/serilog/serilog-settings-configuration
+* https://nblumhardt.com/2016/07/serilog-2-minimumlevel-override/
+
+Serilog has been configured to spit logs out to both the console
+(for `dotnet run` testing & development locally) and Application Insights.
+
+Set the `APPINSIGHTS_INSTRUMENTATIONKEY` environment variable to tell Serilog the application insights key.

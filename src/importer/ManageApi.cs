@@ -1,42 +1,49 @@
 using System;
 using System.Threading.Tasks;
 using GovUk.Education.ManageCourses.ApiClient;
+using Serilog;
 
 namespace GovUk.Education.ManageCourses.UcasCourseImporter
 {
-    public class ManageApi 
+    public class ManageApi
     {
-        private readonly ManageCoursesApiClient client;
+        private readonly ILogger _logger;
+        private readonly ManageCoursesApiClient _client;
 
-        public ManageApi(string apiLocation, string bearerToken)
+        public ManageApi(ILogger logger, string apiLocation, string bearerToken)
         {
-            var patientHttpClient = new System.Net.Http.HttpClient() {
+            _logger = logger;
+
+            var patientHttpClient = new System.Net.Http.HttpClient()
+            {
                 Timeout = TimeSpan.FromMinutes(240)
             };
 
-            client = new ManageCoursesApiClient(new ApiConf(bearerToken), patientHttpClient);  
-            client.BaseUrl = apiLocation;
+            _client = new ManageCoursesApiClient(new ApiConf(bearerToken), patientHttpClient)
+            {
+                BaseUrl = apiLocation
+            };
         }
-        
+
         public void PostPayload(UcasPayload payload)
         {
-            Console.WriteLine("Posting to api...");
-            client.Data_ImportAsync(payload).Wait();
-            Console.WriteLine("Done.");
+            _logger.Information("Posting to api...");
+            _client.Data_ImportAsync(payload).Wait();
+            _logger.Information("Done.");
         }
 
         private class ApiConf : IManageCoursesApiClientConfiguration
         {
-            private string bearerToken;
+            private readonly string _bearerToken;
 
             public ApiConf(string bearerToken)
             {
-                this.bearerToken = bearerToken;
+                _bearerToken = bearerToken;
             }
 
             public Task<string> GetAccessTokenAsync()
             {
-                return Task.FromResult(bearerToken);
+                return Task.FromResult(_bearerToken);
             }
         }
     }
