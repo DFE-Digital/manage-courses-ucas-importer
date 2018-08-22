@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using GovUk.Education.ManageCourses.ApiClient;
 using GovUk.Education.ManageCourses.Xls;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 
@@ -13,6 +14,8 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
         static void Main(string[] args)
         {
             var configuration = GetConfiguration();
+
+            TelemetryConfiguration.Active.InstrumentationKey = configuration["APPINSIGHTS_INSTRUMENTATIONKEY"];
 
             var logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
