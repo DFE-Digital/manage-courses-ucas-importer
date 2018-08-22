@@ -16,10 +16,8 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
         {
             var configuration = GetConfiguration();
 
-            var telemetryClient = new TelemetryClient
-            {
-                Context = {InstrumentationKey = configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]}
-            };
+            TelemetryConfiguration.Active.InstrumentationKey = configuration["APPINSIGHTS_INSTRUMENTATIONKEY"];
+            var telemetryClient = new TelemetryClient(TelemetryConfiguration.Active);
             telemetryClient.TrackEvent("TestEvent");
 
             var logger = new LoggerConfiguration()
