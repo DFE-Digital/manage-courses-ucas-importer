@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using GovUk.Education.ManageCourses.ApiClient;
 using GovUk.Education.ManageCourses.Xls;
+using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Serilog;
@@ -15,12 +16,16 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
         {
             var configuration = GetConfiguration();
 
-            TelemetryConfiguration.Active.InstrumentationKey = configuration["APPINSIGHTS_INSTRUMENTATIONKEY"];
+            var telemetryClient = new TelemetryClient
+            {
+                Context = {InstrumentationKey = configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]}
+            };
+            telemetryClient.TrackEvent("TestEvent");
 
             var logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .WriteTo
-                .ApplicationInsightsTraces(configuration["APPINSIGHTS_INSTRUMENTATIONKEY"])
+                .ApplicationInsightsTraces(telemetryClient)
                 .CreateLogger();
 
             logger.Information("UcasCourseImporter started.");
@@ -36,6 +41,8 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             logger.Information($"Unzipping {zipFile} to {unzipFolder}");
             var extractor = new UcasZipExtractor();
             extractor.Extract(zipFile, unzipFolder);
+
+            telemetryClient.Flush();
 
             var xlsReader = new XlsReader(logger);
 
@@ -62,9 +69,11 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             };
 
             var manageApi = new ManageApi(logger, configuration["manage_api_url"], configuration["manage_api_key"]);
+            telemetryClient.Flush();
             manageApi.PostPayload(payload);
 
             logger.Information("UcasCourseImporter finished.");
+            telemetryClient.Flush();
         }
 
         private static IConfiguration GetConfiguration()
