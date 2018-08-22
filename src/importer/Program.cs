@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading.Tasks;
 using GovUk.Education.ManageCourses.ApiClient;
 using GovUk.Education.ManageCourses.Xls;
 using Microsoft.ApplicationInsights;
@@ -85,6 +86,8 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
 
             logger.Information("UcasCourseImporter finished.");
             telemetryClient.Flush();
+            // flush is not blocking so wait a bit
+            Task.Delay(5000).Wait(); // aaaargh - https://docs.microsoft.com/en-us/azure/application-insights/application-insights-console
         }
 
         private static IConfiguration GetConfiguration()
