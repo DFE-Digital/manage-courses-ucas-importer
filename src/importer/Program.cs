@@ -4,6 +4,7 @@ using System.IO;
 using GovUk.Education.ManageCourses.ApiClient;
 using GovUk.Education.ManageCourses.Xls;
 using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DependencyCollector;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Serilog;
@@ -18,6 +19,18 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
 
             TelemetryConfiguration.Active.InstrumentationKey = configuration["APPINSIGHTS_INSTRUMENTATIONKEY"];
             var telemetryClient = new TelemetryClient(TelemetryConfiguration.Active);
+
+            // boilerplate code from https://docs.microsoft.com/en-us/azure/application-insights/application-insights-console
+            var module = new DependencyTrackingTelemetryModule();
+            module.ExcludeComponentCorrelationHttpHeadersOnDomains.Add("core.windows.net"); // prevent Correlation Id to be sent to certain endpoints. You may add other domains as needed.
+            // enable known dependency tracking, note that in future versions, we will extend this list. 
+            // please check default settings in https://github.com/Microsoft/ApplicationInsights-dotnet-server/blob/develop/Src/DependencyCollector/NuGet/ApplicationInsights.config.install.xdt#L20
+            module.IncludeDiagnosticSourceActivities.Add("Microsoft.Azure.ServiceBus");
+            module.IncludeDiagnosticSourceActivities.Add("Microsoft.Azure.EventHubs");
+            module.Initialize(TelemetryConfiguration.Active); // initialize the module
+            TelemetryConfiguration.Active.TelemetryInitializers.Add(new OperationCorrelationTelemetryInitializer()); // stamps telemetry with correlation identifiers
+            TelemetryConfiguration.Active.TelemetryInitializers.Add(new HttpDependenciesParsingTelemetryInitializer()); // ensures proper DependencyTelemetry.Type is set for Azure RESTful API calls
+
             telemetryClient.TrackEvent("TestEvent");
 
             var logger = new LoggerConfiguration()
