@@ -18,26 +18,10 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
         {
             var configuration = GetConfiguration();
 
-            TelemetryConfiguration.Active.InstrumentationKey = configuration["APPINSIGHTS_INSTRUMENTATIONKEY"];
-            var telemetryClient = new TelemetryClient(TelemetryConfiguration.Active);
-
-            // boilerplate code from https://docs.microsoft.com/en-us/azure/application-insights/application-insights-console
-            var module = new DependencyTrackingTelemetryModule();
-            module.ExcludeComponentCorrelationHttpHeadersOnDomains.Add("core.windows.net"); // prevent Correlation Id to be sent to certain endpoints. You may add other domains as needed.
-            // enable known dependency tracking, note that in future versions, we will extend this list. 
-            // please check default settings in https://github.com/Microsoft/ApplicationInsights-dotnet-server/blob/develop/Src/DependencyCollector/NuGet/ApplicationInsights.config.install.xdt#L20
-            module.IncludeDiagnosticSourceActivities.Add("Microsoft.Azure.ServiceBus");
-            module.IncludeDiagnosticSourceActivities.Add("Microsoft.Azure.EventHubs");
-            module.Initialize(TelemetryConfiguration.Active); // initialize the module
-            TelemetryConfiguration.Active.TelemetryInitializers.Add(new OperationCorrelationTelemetryInitializer()); // stamps telemetry with correlation identifiers
-            TelemetryConfiguration.Active.TelemetryInitializers.Add(new HttpDependenciesParsingTelemetryInitializer()); // ensures proper DependencyTelemetry.Type is set for Azure RESTful API calls
-
-            telemetryClient.TrackEvent("TestEvent");
-
             var logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .WriteTo
-                .ApplicationInsightsTraces(telemetryClient)
+                .ApplicationInsightsTraces(configuration["APPINSIGHTS_INSTRUMENTATIONKEY"])
                 .CreateLogger();
 
             logger.Information("UcasCourseImporter started.");
@@ -53,8 +37,6 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             logger.Information($"Unzipping {zipFile} to {unzipFolder}");
             var extractor = new UcasZipExtractor();
             extractor.Extract(zipFile, unzipFolder);
-
-            telemetryClient.Flush();
 
             var xlsReader = new XlsReader(logger);
 
@@ -81,13 +63,9 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             };
 
             var manageApi = new ManageApi(logger, configuration["manage_api_url"], configuration["manage_api_key"]);
-            telemetryClient.Flush();
             manageApi.PostPayload(payload);
 
             logger.Information("UcasCourseImporter finished.");
-            telemetryClient.Flush();
-            // flush is not blocking so wait a bit
-            Task.Delay(5000).Wait(); // aaaargh - https://docs.microsoft.com/en-us/azure/application-insights/application-insights-console
         }
 
         private static IConfiguration GetConfiguration()
