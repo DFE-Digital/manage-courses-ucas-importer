@@ -50,6 +50,10 @@ namespace GovUk.Education.ManageCourses.Xls
                         ProgramType = row.GetCell(columnMap["PROGRAM_TYPE"]).StringCellValue.Trim(),
                         AccreditingProvider = accreditingProvider == "" ? null : accreditingProvider,
                         CrseOpenDate = row.GetCell(columnMap["CRSE_OPEN_DATE"]).StringCellValue.Trim(),
+                        Publish = row.GetCell(columnMap["PUBLISH"]).StringCellValue.Trim(),
+                        Status = row.GetCell(columnMap["STATUS"]).StringCellValue.Trim(),
+                        VacStatus = row.GetCell(columnMap["VAC_STATUS"]).StringCellValue.Trim(),
+                        HasBeenPublished = row.GetCell(columnMap["HAS_BEEN_PUBLISHED"]).StringCellValue.Trim(),
                     };
                     if (!campuses.Any(c => c.InstCode == ucasCourse.InstCode && c.CampusCode == ucasCourse.CampusCode))
                     {
