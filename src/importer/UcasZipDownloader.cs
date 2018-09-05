@@ -25,7 +25,7 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             _sharedAccessSignatureQueryString = sharedAccessSignature;
         }
 
-        public async Task<string> DownloadLatestToFolder(string folder)
+        public async Task<string> DownloadLatestToFolder(string folder, string prefix)
         {
 
             // list files
@@ -35,7 +35,7 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             var list = XElement.Parse(await listResponse.Content.ReadAsStringAsync());
 
             var filenames = new List<AzureFile>();
-            const string fileNameRegexString = "^NetupdateExtract_([0-9]{2})([0-9]{2})([0-9]{4})_([0-9]{2})([0-9]{2})\\.zip$";
+            var fileNameRegexString = "^" + prefix + "_([0-9]{2})([0-9]{2})([0-9]{4})_([0-9]{2})([0-9]{2})\\.zip$";
             var fileNameRegex = new Regex(fileNameRegexString);
             
             foreach (var blobElement in list.Element("Blobs").Elements())
@@ -67,7 +67,7 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             }
 
             // download best file
-            string fileToWriteTo = Path.Combine(folder, "ucas-data.zip");
+            string fileToWriteTo = Path.Combine(folder, $"{prefix}.zip");
 
             _logger.Information($"Downloading {bestFileName} to {fileToWriteTo}");
 

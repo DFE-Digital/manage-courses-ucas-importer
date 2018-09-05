@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper;
 using GovUk.Education.ManageCourses.ApiClient;
+using GovUk.Education.ManageCourses.Csv.Domain;
 using GovUk.Education.ManageCourses.Xls;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DependencyCollector;
@@ -30,22 +34,24 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             logger.Information($"Using folder {folder}");
             Directory.CreateDirectory(folder);
 
-            var ucasZipDownloader = new UcasZipDownloader(logger, configuration["azure_url"], configuration["azure_signature"]);
-            var zipFile = ucasZipDownloader.DownloadLatestToFolder(folder).Result;
+            var downloadAndExtractor = new DownloaderAndExtractor(logger, folder, configuration["azure_url"], configuration["azure_signature"]);
 
-            var unzipFolder = Path.Combine(folder, "unzip");
-            logger.Information($"Unzipping {zipFile} to {unzipFolder}");
-            var extractor = new UcasZipExtractor();
-            extractor.Extract(zipFile, unzipFolder);
+            var unzipFolder = downloadAndExtractor.DownloadAndExtractLatest("NetupdateExtract");
+            var unzipFolderProfiles = downloadAndExtractor.DownloadAndExtractLatest("EntryProfilesExtract_test");
 
             var xlsReader = new XlsReader(logger);
-
+            
             // only used to avoid importing orphaned data
             // i.e. we do not import institutions but need them to determine which campuses to import
             var subjects = xlsReader.ReadSubjects("data");
 
+            // entry profile data - used to correct institution data
+            var institutionProfiles = ReadInstitutionProfiles(unzipFolderProfiles);
+
             // data to import
             var institutions = xlsReader.ReadInstitutions(unzipFolder);
+            UpdateContactDetails(institutions, institutionProfiles);
+
             var campuses = xlsReader.ReadCampuses(unzipFolder, institutions);
             var courses = xlsReader.ReadCourses(unzipFolder, campuses);
             var courseSubjects = xlsReader.ReadCourseSubjects(unzipFolder, courses, subjects);
@@ -66,6 +72,38 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             manageApi.PostPayload(payload);
 
             logger.Information("UcasCourseImporter finished.");
+        }
+
+        private static Dictionary<string, UcasInstitutionProfile> ReadInstitutionProfiles(string unzipFolderProfiles)
+        {
+            var institutionProfiles = new Dictionary<string, UcasInstitutionProfile>();
+            var institutionProfilesCsv = new CsvReader(File.OpenText(Path.Combine(unzipFolderProfiles, "gttr_inst.csv")));
+            institutionProfilesCsv.Read();
+            institutionProfilesCsv.ReadHeader();
+            while (institutionProfilesCsv.Read())
+            {
+                var rec = institutionProfilesCsv.GetRecord<UcasInstitutionProfile>();
+                institutionProfiles[rec.inst_code] = rec;
+            }
+
+            return institutionProfiles;
+        }
+
+        private static void UpdateContactDetails(List<UcasInstitution> institutions, IDictionary<string, UcasInstitutionProfile> institutionProfiles)
+        {
+            foreach(var inst in institutions)
+            {
+                if (institutionProfiles.TryGetValue(inst.InstCode, out UcasInstitutionProfile profile))
+                {
+                    inst.Addr1 = profile.inst_address1.Trim();
+                    inst.Addr2 = profile.inst_address2.Trim();
+                    inst.Addr3 = profile.inst_address3.Trim();
+                    inst.Addr4 = profile.inst_address4.Trim();
+                    inst.Postcode = profile.inst_post_code.Trim();
+                    inst.ContactName = profile.inst_person.Trim();
+                    inst.Url = profile.web_addr.Trim();
+                }
+            }
         }
 
         private static IConfiguration GetConfiguration()
