@@ -2,7 +2,6 @@
   "profiles": {
     "UcasCourseImporter": {
       "commandName": "Project",
-      "commandLineArgs": "--folder C:\\repo\\dfe\\manage\\import\\data --api-key chicken --api-url http://localhost:6001/",
       "environmentVariables": {
         "APPINSIGHTS_INSTRUMENTATIONKEY": "hello-insights"
       }
