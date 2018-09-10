@@ -30,11 +30,13 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
 
             logger.Information("UcasCourseImporter started.");
 
+            var configOptions = new UcasCourseImporterConfigurationOptions(configuration);
+            configOptions.Validate();
+
             var folder = Path.Combine(Path.GetTempPath(), "ucasfiles", Guid.NewGuid().ToString());
-            logger.Information($"Using folder {folder}");
             Directory.CreateDirectory(folder);
 
-            var downloadAndExtractor = new DownloaderAndExtractor(logger, folder, configuration["azure_url"], configuration["azure_signature"]);
+            var downloadAndExtractor = new DownloaderAndExtractor(logger, folder, configOptions.AzureUrl, configOptions.AzureSignature);
 
             var unzipFolder = downloadAndExtractor.DownloadAndExtractLatest("NetupdateExtract");
             var unzipFolderProfiles = downloadAndExtractor.DownloadAndExtractLatest("EntryProfilesExtract_test");
@@ -68,7 +70,7 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
                 NoteTexts = new ObservableCollection<UcasNoteText>(noteTexts)
             };
 
-            var manageApi = new ManageApi(logger, configuration["manage_api_url"], configuration["manage_api_key"]);
+            var manageApi = new ManageApi(logger, configOptions.ManageApiUrl, configOptions.ManageApiKey);
             manageApi.PostPayload(payload);
 
             logger.Information("UcasCourseImporter finished.");
