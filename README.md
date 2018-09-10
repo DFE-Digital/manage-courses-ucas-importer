@@ -1,3 +1,5 @@
+
+
 # About
 
 Reads data provided daily to DfE in .xls format and pushes it into the
@@ -18,11 +20,27 @@ GTTR_INTAKE.xls
 GTTR_NOTETEXT.xls
 ```
 
-2. Run in the repository root
+2. Set config options
+
+```bash
+# .\src\importer>
+
+# refer to https://github.com/DFE-Digital/manage-courses-api
+dotnet user-secrets set manage_api_url the-manage-api-url (ie. http://localhost:6001)
+dotnet user-secrets set manage_api_key the-manage-api-key (ie. the same value set for https://github.com/DFE-Digital/manage-courses-api "api:key the-api-key" ) 
+
+# values available from portal.azure.com 
+dotnet user-secrets set azure_url the-azure-url
+dotnet user-secrets set azure_signature the-azure-signature
 ```
+
+
+3. Run in the repository root
+```bash
+# .\src\importer>
 dotnet restore
 dotnet build
-dotnet run --project src/importer/UcasCourseImporter.csproj --folder data --url <ManageCourses API URL> --key <ManageCourses API admin key>
+dotnet run
 ```
 
 ## Logging
