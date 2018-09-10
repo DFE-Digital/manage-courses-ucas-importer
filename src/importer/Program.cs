@@ -101,6 +101,8 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
                     inst.Addr4 = profile.inst_address4.Trim();
                     inst.Postcode = profile.inst_post_code.Trim();
                     inst.ContactName = profile.inst_person.Trim();
+                    inst.Email = profile.email.Trim();
+                    inst.Telephone = profile.inst_tel.Trim();
                     inst.Url = profile.web_addr.Trim();
                 }
             }
