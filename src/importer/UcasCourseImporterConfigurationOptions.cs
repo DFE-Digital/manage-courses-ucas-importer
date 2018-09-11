@@ -16,22 +16,26 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
 
         public void Validate()
         {
-            if(string.IsNullOrWhiteSpace(this.AzureUrl)) {
+            if(string.IsNullOrWhiteSpace(this.AzureUrl))
+            {
                 var name = nameof(this.AzureUrl);
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "The '{0}' option must be provided.", name), name);
             }
 
-            if(string.IsNullOrWhiteSpace(this.AzureSignature)) {
+            if(string.IsNullOrWhiteSpace(this.AzureSignature))
+            {
                 var name = nameof(this.AzureSignature);
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "The '{0}' option must be provided.", name), name);
             }
 
-            if(string.IsNullOrWhiteSpace(this.ManageApiUrl)) {
+            if(string.IsNullOrWhiteSpace(this.ManageApiUrl))
+            {
                 var name = nameof(this.ManageApiUrl);
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "The '{0}' option must be provided.", name), name);
             }
 
-            if(string.IsNullOrWhiteSpace(this.ManageApiKey)) {
+            if(string.IsNullOrWhiteSpace(this.ManageApiKey)) 
+            {
                 var name = nameof(this.ManageApiKey);
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "The '{0}' option must be provided.", name), name);
             }

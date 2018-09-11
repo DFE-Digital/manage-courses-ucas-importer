@@ -27,7 +27,7 @@ GTTR_NOTETEXT.xls
 
 # refer to https://github.com/DFE-Digital/manage-courses-api
 dotnet user-secrets set manage_api_url the-manage-api-url (ie. http://localhost:6001)
-dotnet user-secrets set manage_api_key the-manage-api-key (ie. the same value set for https://github.com/DFE-Digital/manage-courses-api "api:key the-api-key" ) 
+dotnet user-secrets set manage_api_key the-manage-api-key (ie. the same value set for https://github.com/DFE-Digital/manage-courses-api "refer to api:key" ) 
 
 # values available from portal.azure.com 
 dotnet user-secrets set azure_url the-azure-url
