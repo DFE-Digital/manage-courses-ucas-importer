@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/importer/bin/Debug/netcoreapp2.0/UcasCourseImporter.dll",
+            "program": "${workspaceFolder}/src/importer/bin/Debug/netcoreapp2.1/UcasCourseImporter.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/importer",
             // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
