@@ -54,6 +54,8 @@ namespace GovUk.Education.ManageCourses.Xls
                         Status = row.GetCell(columnMap["STATUS"]).StringCellValue.Trim(),
                         VacStatus = row.GetCell(columnMap["VAC_STATUS"]).StringCellValue.Trim(),
                         HasBeenPublished = row.GetCell(columnMap["HAS_BEEN_PUBLISHED"]).StringCellValue.Trim(),
+                        StartYear = row.GetCell(columnMap["YEAR_CODE"]).StringCellValue.Trim(),
+                        StartMonth = row.GetCell(columnMap["CRSE_MONTH"]).StringCellValue.Trim()
                     };
                     if (!campuses.Any(c => c.InstCode == ucasCourse.InstCode && c.CampusCode == ucasCourse.CampusCode))
                     {
