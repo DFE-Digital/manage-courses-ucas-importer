@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using CsvHelper;
 using GovUk.Education.ManageCourses.ApiClient;
 using GovUk.Education.ManageCourses.Csv.Domain;
 using GovUk.Education.ManageCourses.Xls;
-using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.DependencyCollector;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 
@@ -36,13 +32,14 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             var folder = Path.Combine(Path.GetTempPath(), "ucasfiles", Guid.NewGuid().ToString());
             Directory.CreateDirectory(folder);
 
-            var downloadAndExtractor = new DownloaderAndExtractor(logger, folder, configOptions.AzureUrl, configOptions.AzureSignature);
+            var downloadAndExtractor = new DownloaderAndExtractor(logger, folder, configOptions.AzureUrl,
+                configOptions.AzureSignature);
 
             var unzipFolder = downloadAndExtractor.DownloadAndExtractLatest("NetupdateExtract");
             var unzipFolderProfiles = downloadAndExtractor.DownloadAndExtractLatest("EntryProfilesExtract_test");
 
             var xlsReader = new XlsReader(logger);
-            
+
             // only used to avoid importing orphaned data
             // i.e. we do not import institutions but need them to determine which campuses to import
             var subjects = xlsReader.ReadSubjects("data");
@@ -54,28 +51,49 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             var institutions = xlsReader.ReadInstitutions(unzipFolder);
             UpdateContactDetails(institutions, institutionProfiles);
 
-            var campuses = xlsReader.ReadCampuses(unzipFolder, institutions);
-            var courses = xlsReader.ReadCourses(unzipFolder, campuses);
-            var courseSubjects = xlsReader.ReadCourseSubjects(unzipFolder, courses, subjects);
-            var courseNotes = xlsReader.ReadCourseNotes(unzipFolder);
-            var noteTexts = xlsReader.ReadNoteText(unzipFolder);
-
-            var payload = new UcasPayload
+            try
             {
-                Institutions = new ObservableCollection<UcasInstitution>(institutions),
-                Courses = new ObservableCollection<UcasCourse>(courses),
-                CourseSubjects = new ObservableCollection<UcasCourseSubject>(courseSubjects),
-                Campuses = new ObservableCollection<UcasCampus>(campuses),
-                CourseNotes = new ObservableCollection<UcasCourseNote>(courseNotes),
-                NoteTexts = new ObservableCollection<UcasNoteText>(noteTexts)
-            };
+                var campuses = xlsReader.ReadCampuses(unzipFolder, institutions);
+                var courses = xlsReader.ReadCourses(unzipFolder, campuses);
+                var courseSubjects = xlsReader.ReadCourseSubjects(unzipFolder, courses, subjects);
+                var courseNotes = xlsReader.ReadCourseNotes(unzipFolder);
+                var noteTexts = xlsReader.ReadNoteText(unzipFolder);
 
-            var manageApi = new ManageApi(logger, configOptions.ManageApiUrl, configOptions.ManageApiKey);
-            manageApi.PostPayload(payload);
+                var payload = new UcasPayload
+                {
+                    Institutions = new ObservableCollection<UcasInstitution>(institutions),
+                    Courses = new ObservableCollection<UcasCourse>(courses),
+                    CourseSubjects = new ObservableCollection<UcasCourseSubject>(courseSubjects),
+                    Campuses = new ObservableCollection<UcasCampus>(campuses),
+                    CourseNotes = new ObservableCollection<UcasCourseNote>(courseNotes),
+                    NoteTexts = new ObservableCollection<UcasNoteText>(noteTexts)
+                };
 
-            logger.Information("UcasCourseImporter finished.");
+                var manageApi = new ManageApi(logger, configOptions.ManageApiUrl, configOptions.ManageApiKey);
+                manageApi.PostPayload(payload);
+            }
+            catch (Exception e)
+            {
+                logger.Error(e, "UcasCourseImporter error.");
+            }
+            finally
+            {
+                CleanupTempData(folder, logger);
+                logger.Information("UcasCourseImporter finished.");
+            }
         }
-
+        private static void CleanupTempData(string folder, ILogger logger)
+        {
+            try
+            {
+                var di = new DirectoryInfo(folder);
+                di.Delete(true);
+            }
+            catch (Exception e)
+            {
+                logger.Error(e, string.Format(CultureInfo.CurrentCulture, "CleanupTempData({0}) failed.", folder));
+            }
+        }
         private static Dictionary<string, UcasInstitutionProfile> ReadInstitutionProfiles(string unzipFolderProfiles)
         {
             var institutionProfiles = new Dictionary<string, UcasInstitutionProfile>();
