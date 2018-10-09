@@ -30,29 +30,29 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
             configOptions.Validate();
 
             var folder = Path.Combine(Path.GetTempPath(), "ucasfiles", Guid.NewGuid().ToString());
-            Directory.CreateDirectory(folder);
-
-            var downloadAndExtractor = new DownloaderAndExtractor(logger, folder, configOptions.AzureUrl,
-                configOptions.AzureSignature);
-
-            var unzipFolder = downloadAndExtractor.DownloadAndExtractLatest("NetupdateExtract");
-            var unzipFolderProfiles = downloadAndExtractor.DownloadAndExtractLatest("EntryProfilesExtract_test");
-
-            var xlsReader = new XlsReader(logger);
-
-            // only used to avoid importing orphaned data
-            // i.e. we do not import institutions but need them to determine which campuses to import
-            var subjects = xlsReader.ReadSubjects("data");
-
-            // entry profile data - used to correct institution data
-            var institutionProfiles = ReadInstitutionProfiles(unzipFolderProfiles);
-
-            // data to import
-            var institutions = xlsReader.ReadInstitutions(unzipFolder);
-            UpdateContactDetails(institutions, institutionProfiles);
 
             try
             {
+                Directory.CreateDirectory(folder);
+
+                var downloadAndExtractor = new DownloaderAndExtractor(logger, folder, configOptions.AzureUrl,
+                    configOptions.AzureSignature);
+
+                var unzipFolder = downloadAndExtractor.DownloadAndExtractLatest("NetupdateExtract");
+                var unzipFolderProfiles = downloadAndExtractor.DownloadAndExtractLatest("EntryProfilesExtract_test");
+
+                var xlsReader = new XlsReader(logger);
+
+                // only used to avoid importing orphaned data
+                // i.e. we do not import institutions but need them to determine which campuses to import
+                var subjects = xlsReader.ReadSubjects("data");
+
+                // entry profile data - used to correct institution data
+                var institutionProfiles = ReadInstitutionProfiles(unzipFolderProfiles);
+
+                // data to import
+                var institutions = xlsReader.ReadInstitutions(unzipFolder);
+                UpdateContactDetails(institutions, institutionProfiles);
                 var campuses = xlsReader.ReadCampuses(unzipFolder, institutions);
                 var courses = xlsReader.ReadCourses(unzipFolder, campuses);
                 var courseSubjects = xlsReader.ReadCourseSubjects(unzipFolder, courses, subjects);
@@ -70,7 +70,7 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
                 };
 
                 var manageApi = new ManageApi(logger, configOptions.ManageApiUrl, configOptions.ManageApiKey);
-                manageApi.PostPayload(payload);
+//                manageApi.PostPayload(payload);
             }
             catch (Exception e)
             {
@@ -97,13 +97,17 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
         private static Dictionary<string, UcasInstitutionProfile> ReadInstitutionProfiles(string unzipFolderProfiles)
         {
             var institutionProfiles = new Dictionary<string, UcasInstitutionProfile>();
-            var institutionProfilesCsv = new CsvReader(File.OpenText(Path.Combine(unzipFolderProfiles, "gttr_inst.csv")));
-            institutionProfilesCsv.Read();
-            institutionProfilesCsv.ReadHeader();
-            while (institutionProfilesCsv.Read())
+
+            using (var institutionProfilesCsv =
+                new CsvReader(File.OpenText(Path.Combine(unzipFolderProfiles, "gttr_inst.csv"))))
             {
-                var rec = institutionProfilesCsv.GetRecord<UcasInstitutionProfile>();
-                institutionProfiles[rec.inst_code] = rec;
+                institutionProfilesCsv.Read();
+                institutionProfilesCsv.ReadHeader();
+                while (institutionProfilesCsv.Read())
+                {
+                    var rec = institutionProfilesCsv.GetRecord<UcasInstitutionProfile>();
+                    institutionProfiles[rec.inst_code] = rec;
+                }
             }
 
             return institutionProfiles;
