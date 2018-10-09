@@ -98,9 +98,9 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
         {
             var institutionProfiles = new Dictionary<string, UcasInstitutionProfile>();
 
-            using (var institutionProfilesCsv =
-                new CsvReader(File.OpenText(Path.Combine(unzipFolderProfiles, "gttr_inst.csv"))))
+            using (var fileStr = File.OpenText(Path.Combine(unzipFolderProfiles, "gttr_inst.csv")))
             {
+                var institutionProfilesCsv = new CsvReader(fileStr);
                 institutionProfilesCsv.Read();
                 institutionProfilesCsv.ReadHeader();
                 while (institutionProfilesCsv.Read())
