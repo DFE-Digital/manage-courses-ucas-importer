@@ -70,7 +70,7 @@ namespace GovUk.Education.ManageCourses.UcasCourseImporter
                 };
 
                 var manageApi = new ManageApi(logger, configOptions.ManageApiUrl, configOptions.ManageApiKey);
-//                manageApi.PostPayload(payload);
+                manageApi.PostPayload(payload);
             }
             catch (Exception e)
             {
