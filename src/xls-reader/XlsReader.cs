@@ -11,6 +11,14 @@ namespace GovUk.Education.ManageCourses.Xls
     {
         private readonly ILogger _logger;
 
+        private const string InstFilename = "GTTR_INST.xls";
+        private const string CrseFilename = "GTTR_CRSE.xls";
+        private const string CrseSubjectFilename = "GTTR_CRSE_SUBJECT.xls";
+        private const string SubjectFilename = "GTTR_SUBJECT.xls";
+        private const string CampusFilename = "GTTR_CAMPUS.xls";
+        private const string CrseNoteFilename = "GTTR_CRSENOTE.xls";
+        private const string NoteTextFilename = "GTTR_NOTETEXT.xls";
+
         public XlsReader(ILogger logger)
         {
             _logger = logger;
@@ -18,7 +26,7 @@ namespace GovUk.Education.ManageCourses.Xls
 
         public List<UcasCourse> ReadCourses(string folder, IList<UcasCampus> campuses)
         {
-            var file = new FileInfo(Path.Combine(folder, "GTTR_CRSE.xls"));
+            var file = new FileInfo(Path.Combine(folder, CrseFilename));
             _logger.Information("Reading course xls file from: " + file.FullName);
 
             var courses = new List<UcasCourse>();
@@ -59,7 +67,8 @@ namespace GovUk.Education.ManageCourses.Xls
                     };
                     if (!campuses.Any(c => c.InstCode == ucasCourse.InstCode && c.CampusCode == ucasCourse.CampusCode))
                     {
-                        _logger.Warning($"  UcasCourse skipped - invalid campus '{ucasCourse.CampusCode}' inst_code/crse_code: {ucasCourse.InstCode}, {ucasCourse.CrseCode}");
+                        _logger.Warning($"Skipped invalid record in {CrseFilename} with crse_code {ucasCourse.CrseCode}."
+                                        +"{CampusFilename} didn't contain a valid record with inst_code {ucasCourse.InstCode} and campus_code '{ucasCourse.CampusCode}'");
                         continue;
                     }
                     courses.Add(ucasCourse);
@@ -70,7 +79,7 @@ namespace GovUk.Education.ManageCourses.Xls
         }
         public List<UcasInstitution> ReadInstitutions(string folder)
         {
-            var file = new FileInfo(Path.Combine(folder, "GTTR_INST.xls"));
+            var file = new FileInfo(Path.Combine(folder, InstFilename));
             _logger.Information("Reading institution xls file from: " + file.FullName);
 
             var institutions = new List<UcasInstitution>();
@@ -117,7 +126,7 @@ namespace GovUk.Education.ManageCourses.Xls
 
         public List<UcasCourseSubject> ReadCourseSubjects(string folder, IList<UcasCourse> courses, IList<UcasSubject> subjects)
         {
-            var file = new FileInfo(Path.Combine(folder, "GTTR_CRSE_SUBJECT.xls"));
+            var file = new FileInfo(Path.Combine(folder, CrseSubjectFilename));
             _logger.Information("Reading course subject xls file from: " + file.FullName);
 
             var courseSubjects = new List<UcasCourseSubject>();
@@ -144,16 +153,17 @@ namespace GovUk.Education.ManageCourses.Xls
                         SubjectCode = row.GetCell(columnMap["SUBJECT_CODE"]).StringCellValue.Trim(),
                         YearCode = row.GetCell(columnMap["YEAR_CODE"]).StringCellValue.Trim()
                     };
+                    var skipMessage = $"Skipped invalid record in {CrseSubjectFilename} with inst_code {ucasCourseSubject.InstCode} and crse_code {ucasCourseSubject.CrseCode}.";
                     if (!courses.Any(c => c.InstCode == ucasCourseSubject.InstCode && c.CrseCode == ucasCourseSubject.CrseCode))
                     {
                         skipCount++;
-                        _logger.Warning($"  UcasCourseSubject skipped - invalid inst_code/crse_code combination: {ucasCourseSubject.InstCode}, {ucasCourseSubject.CrseCode}");
+                        _logger.Warning(skipMessage+"No valid record with this inst_code and crse_code found in {CrseFilename}");
                         continue;
                     }
                     if (!subjects.Any(c => c.SubjectCode == ucasCourseSubject.SubjectCode))
                     {
                         skipCount++;
-                        _logger.Warning($"  UcasCourseSubject skipped - invalid subject code: {ucasCourseSubject.SubjectCode} - inst/crse: {ucasCourseSubject.InstCode}, {ucasCourseSubject.CrseCode}");
+                        _logger.Warning(skipMessage+"No valid record with this subject_code found in {SubjectFilename}");
                         continue;
                     }
                     courseSubjects.Add(ucasCourseSubject
@@ -161,12 +171,12 @@ namespace GovUk.Education.ManageCourses.Xls
                 }
             }
             _logger.Information(courseSubjects.Count + " course-subjects loaded from xls");
-            _logger.Warning($"  {skipCount} course-subjects rows skipped due to integrity violations");
+            _logger.Warning($"{skipCount} course-subjects rows skipped due to integrity violations");
             return courseSubjects;
         }
         public List<UcasSubject> ReadSubjects(string folder)
         {
-            var file = new FileInfo(Path.Combine(folder, "GTTR_SUBJECT.xls"));
+            var file = new FileInfo(Path.Combine(folder, SubjectFilename));
             _logger.Information("Reading subject xls file from: " + file.FullName);
 
             var subjects = new List<UcasSubject>();
@@ -199,7 +209,7 @@ namespace GovUk.Education.ManageCourses.Xls
         }
         public List<UcasCampus> ReadCampuses(string folder, IList<UcasInstitution> institutions)
         {
-            var file = new FileInfo(Path.Combine(folder, "GTTR_CAMPUS.xls"));
+            var file = new FileInfo(Path.Combine(folder, CampusFilename));
             _logger.Information("Reading campus xls file from: " + file.FullName);
 
             var campuses = new List<UcasCampus>();
@@ -234,7 +244,8 @@ namespace GovUk.Education.ManageCourses.Xls
                     };
                     if (!institutions.Any(i => i.InstCode == ucasCampus.InstCode))
                     {
-                        _logger.Warning($"  Campus '{ucasCampus.CampusCode}' skipped - invalid inst_code {ucasCampus.InstCode}");
+                        _logger.Warning($"Skipped invalid record in {CampusFilename} with inst_code {ucasCampus.InstCode} and campus_code '{ucasCampus.CampusCode}'."
+                                        +"inst_code not found in {InstFilename}");
                         continue;
                     }
                     campuses.Add(ucasCampus);
@@ -245,7 +256,7 @@ namespace GovUk.Education.ManageCourses.Xls
         }
         public List<UcasCourseNote> ReadCourseNotes(string folder)
         {
-            var file = new FileInfo(Path.Combine(folder, "GTTR_CRSENOTE.xls"));
+            var file = new FileInfo(Path.Combine(folder, CrseNoteFilename));
             _logger.Information("Reading course note xls file from: " + file.FullName);
 
             var courseNotes = new List<UcasCourseNote>();
@@ -280,7 +291,7 @@ namespace GovUk.Education.ManageCourses.Xls
         }
         public List<UcasNoteText> ReadNoteText(string folder)
         {
-            var file = new FileInfo(Path.Combine(folder, "GTTR_NOTETEXT.xls"));
+            var file = new FileInfo(Path.Combine(folder, NoteTextFilename));
             _logger.Information("Reading note text xls file from: " + file.FullName);
 
             var noteTexts = new List<UcasNoteText>();
