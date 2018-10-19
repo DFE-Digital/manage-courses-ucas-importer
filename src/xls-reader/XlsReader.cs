@@ -68,7 +68,7 @@ namespace GovUk.Education.ManageCourses.Xls
                     if (!campuses.Any(c => c.InstCode == ucasCourse.InstCode && c.CampusCode == ucasCourse.CampusCode))
                     {
                         _logger.Warning($"Skipped invalid record in {CrseFilename} with crse_code {ucasCourse.CrseCode}. "
-                                        +"{CampusFilename} didn't contain a valid record with inst_code {ucasCourse.InstCode} and campus_code '{ucasCourse.CampusCode}'");
+                                       +$"{CampusFilename} didn't contain a valid record with inst_code {ucasCourse.InstCode} and campus_code '{ucasCourse.CampusCode}'");
                         continue;
                     }
                     courses.Add(ucasCourse);
@@ -157,13 +157,13 @@ namespace GovUk.Education.ManageCourses.Xls
                     if (!courses.Any(c => c.InstCode == ucasCourseSubject.InstCode && c.CrseCode == ucasCourseSubject.CrseCode))
                     {
                         skipCount++;
-                        _logger.Warning(skipMessage+"No valid record with this inst_code and crse_code found in {CrseFilename}");
+                        _logger.Warning(skipMessage+$"No valid record with this inst_code and crse_code found in {CrseFilename}");
                         continue;
                     }
                     if (!subjects.Any(c => c.SubjectCode == ucasCourseSubject.SubjectCode))
                     {
                         skipCount++;
-                        _logger.Warning(skipMessage+"No valid record with this subject_code found in {SubjectFilename}");
+                        _logger.Warning(skipMessage+$"No valid record with this subject_code found in {SubjectFilename}");
                         continue;
                     }
                     courseSubjects.Add(ucasCourseSubject
@@ -245,7 +245,7 @@ namespace GovUk.Education.ManageCourses.Xls
                     if (!institutions.Any(i => i.InstCode == ucasCampus.InstCode))
                     {
                         _logger.Warning($"Skipped invalid record in {CampusFilename} with inst_code {ucasCampus.InstCode} and campus_code '{ucasCampus.CampusCode}'. "
-                                        +"inst_code not found in {InstFilename}");
+                                       +$"inst_code not found in {InstFilename}");
                         continue;
                     }
                     campuses.Add(ucasCampus);
