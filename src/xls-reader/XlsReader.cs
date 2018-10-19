@@ -67,7 +67,7 @@ namespace GovUk.Education.ManageCourses.Xls
                     };
                     if (!campuses.Any(c => c.InstCode == ucasCourse.InstCode && c.CampusCode == ucasCourse.CampusCode))
                     {
-                        _logger.Warning($"Skipped invalid record in {CrseFilename} with crse_code {ucasCourse.CrseCode}."
+                        _logger.Warning($"Skipped invalid record in {CrseFilename} with crse_code {ucasCourse.CrseCode}. "
                                         +"{CampusFilename} didn't contain a valid record with inst_code {ucasCourse.InstCode} and campus_code '{ucasCourse.CampusCode}'");
                         continue;
                     }
@@ -153,7 +153,7 @@ namespace GovUk.Education.ManageCourses.Xls
                         SubjectCode = row.GetCell(columnMap["SUBJECT_CODE"]).StringCellValue.Trim(),
                         YearCode = row.GetCell(columnMap["YEAR_CODE"]).StringCellValue.Trim()
                     };
-                    var skipMessage = $"Skipped invalid record in {CrseSubjectFilename} with inst_code {ucasCourseSubject.InstCode} and crse_code {ucasCourseSubject.CrseCode}.";
+                    var skipMessage = $"Skipped invalid record in {CrseSubjectFilename} with inst_code {ucasCourseSubject.InstCode} and crse_code {ucasCourseSubject.CrseCode}. ";
                     if (!courses.Any(c => c.InstCode == ucasCourseSubject.InstCode && c.CrseCode == ucasCourseSubject.CrseCode))
                     {
                         skipCount++;
@@ -244,7 +244,7 @@ namespace GovUk.Education.ManageCourses.Xls
                     };
                     if (!institutions.Any(i => i.InstCode == ucasCampus.InstCode))
                     {
-                        _logger.Warning($"Skipped invalid record in {CampusFilename} with inst_code {ucasCampus.InstCode} and campus_code '{ucasCampus.CampusCode}'."
+                        _logger.Warning($"Skipped invalid record in {CampusFilename} with inst_code {ucasCampus.InstCode} and campus_code '{ucasCampus.CampusCode}'. "
                                         +"inst_code not found in {InstFilename}");
                         continue;
                     }
